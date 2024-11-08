@@ -164,6 +164,7 @@ task pbmm2_align_wgs {
     docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:24218cb5cbc68d1fd64db14a9dc38263d3d931c74aca872c998d12ef43020ef0"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "1440"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

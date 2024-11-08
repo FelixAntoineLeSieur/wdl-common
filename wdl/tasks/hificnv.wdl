@@ -184,6 +184,7 @@ task hificnv {
     docker: "~{runtime_attributes.container_registry}/hificnv@sha256:c4764a70c8c2028edb1cdb4352997269947c5076ddd1aeaeef6c5076c630304d"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
