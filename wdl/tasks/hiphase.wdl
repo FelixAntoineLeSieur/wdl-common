@@ -204,6 +204,7 @@ task hiphase {
     docker: "~{runtime_attributes.container_registry}/hiphase@sha256:47fe7d42aea6b1b2e6d3c7401bc35a184464c3f647473d0525c00f3c968b40ad"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "90"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

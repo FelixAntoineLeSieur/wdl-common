@@ -61,6 +61,7 @@ task pbsv_discover {
     docker: "~{runtime_attributes.container_registry}/pbsv@sha256:3a8529853c1e214809dcdaacac0079de70d0c037b41b43bb8ba7c3fc5f783e26"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "90"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -193,6 +194,7 @@ task pbsv_call {
     docker: "~{runtime_attributes.container_registry}/pbsv@sha256:3a8529853c1e214809dcdaacac0079de70d0c037b41b43bb8ba7c3fc5f783e26"
     cpu: threads
     memory: "~{mem_gb} GB"
+    time_minutes: "90"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

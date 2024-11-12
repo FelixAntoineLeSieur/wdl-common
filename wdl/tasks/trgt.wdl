@@ -138,6 +138,7 @@ task trgt {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:0284ff5756f8d47d9d81b515b8b1a6c81fac862ae5a7b4fe89f65235c3e5e0c9"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -220,6 +221,7 @@ task trgt_merge {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:0284ff5756f8d47d9d81b515b8b1a6c81fac862ae5a7b4fe89f65235c3e5e0c9"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "30"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -288,6 +290,7 @@ task coverage_dropouts {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:0284ff5756f8d47d9d81b515b8b1a6c81fac862ae5a7b4fe89f65235c3e5e0c9"
     cpu: threads
     memory: mem_gb + " GB"
+    time_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
