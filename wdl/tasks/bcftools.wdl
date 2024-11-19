@@ -553,7 +553,7 @@ task sv_stats {
     docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
     cpu: threads
     memory: mem_gb + " GB"
-    time_minutes: "15
+    time_minutes: "15"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
