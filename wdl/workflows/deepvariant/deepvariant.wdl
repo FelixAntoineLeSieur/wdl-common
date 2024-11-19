@@ -264,7 +264,7 @@ task deepvariant_make_examples {
     docker: docker_image
     cpu: tasks_per_shard
     memory: mem_gb + " GB"
-    time_minutes: "480"
+    time_minutes: "360"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -348,7 +348,7 @@ task deepvariant_call_variants_cpu {
     docker: docker_image
     cpu: threads
     memory: mem_gb + " GB"
-    time_minutes: "180"
+    time_minutes: "480"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -569,7 +569,8 @@ task deepvariant_postprocess_variants {
   runtime {
     docker: docker_image
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb + " GB"
+    time_minutes: "180"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
