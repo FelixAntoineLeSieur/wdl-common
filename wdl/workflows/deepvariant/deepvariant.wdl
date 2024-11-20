@@ -534,8 +534,8 @@ task deepvariant_postprocess_variants {
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads   = 2
-  Int mem_gb    = 72
+  Int threads   = 4
+  Int mem_gb    = 88
   Int disk_size = ceil((size(tfrecords_tar, "GB") + size(ref_fasta, "GB") + size(nonvariant_site_tfrecord_tars, "GB")) * 2 + 20)
 
   command <<<
