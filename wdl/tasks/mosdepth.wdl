@@ -75,7 +75,7 @@ task mosdepth {
       ~{if threads > 1 then "--threads " + (threads - 1) else ""} \
       --by 500 \
       --no-per-base \
-      --thresholds 5,20,50
+      --thresholds 5,20,50 \
       --use-median \
       ~{out_prefix} \
       ~{aligned_bam}
