@@ -80,6 +80,18 @@ task mosdepth {
       ~{out_prefix} \
       ~{aligned_bam}
 
+    #My thresholds capture:
+    cat << EOF > thresholdCoverage.py
+    import sys, pandas as pd
+    df=pd.read_csv('~{out_prefix}.mosdepth.thresholds.bed.gz', sep='\t')
+    fiveX=(df["5X"].sum())/3200000000
+    twentyX=(df["20X"].sum())/3200000000
+    fiftyX=(df["50X"].sum())/3200000000
+    out=pd.DataFrame({"5X": [fiveX], "20X":[twentyX],"50X": [fiftyX]})
+    out.to_csv('thresholdsTable.tsv',sep='\t',index=False)
+    EOF
+    python3 ./thresholdCoverage.py
+    
     # normalize output names
     if [ ! -f ~{sample_id}.~{ref_name}.mosdepth.summary.txt ]; then
       mv --verbose ~{out_prefix}.mosdepth.summary.txt ~{sample_id}.~{ref_name}.mosdepth.summary.txt
