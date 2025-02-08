@@ -91,20 +91,18 @@ task cpg_pileup {
       --ref ~{ref_fasta} \
       --output-prefix ~{out_prefix} \
       --min-mapq ~{min_mapq} \
-      --min-coverage ~{min_coverage} \
-      --model "$PILEUP_MODEL_DIR"/pileup_calling_model.v1.tflite
+      --min-coverage ~{min_coverage}
 
-    # rename for clarity; compress and index bed files
+    # rename for clarity
     for infix in combined hap1 hap2; do
       echo "0" > "~{out_prefix}.${infix}.bed.count"
       if [ -f "~{out_prefix}.${infix}.bw" ]; then
         mv --verbose "~{out_prefix}.${infix}.bw" "~{out_prefix}.cpg_pileup.${infix}.bw"
       fi
-      if [ -f "~{out_prefix}.${infix}.bed" ]; then
-        wc --lines < "~{out_prefix}.${infix}.bed" > "~{out_prefix}.${infix}.bed.count"
-        mv --verbose "~{out_prefix}.${infix}.bed" "~{out_prefix}.cpg_pileup.${infix}.bed"
-        bgzip "~{out_prefix}.cpg_pileup.${infix}.bed"
-        tabix --preset bed "~{out_prefix}.cpg_pileup.${infix}.bed.gz"
+      if [ -f "~{out_prefix}.${infix}.bed.gz" ]; then
+        zcat "~{out_prefix}.${infix}.bed.gz" | wc --lines > "~{out_prefix}.${infix}.bed.count"
+        mv --verbose "~{out_prefix}.${infix}.bed.gz" "~{out_prefix}.cpg_pileup.${infix}.bed.gz"
+        mv --verbose "~{out_prefix}.${infix}.bed.gz.tbi" "~{out_prefix}.cpg_pileup.${infix}.bed.gz.tbi"
       fi
     done
   >>>
@@ -125,7 +123,7 @@ task cpg_pileup {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:d6e63fe3f6855cfe60f573de1ca85fab27f4a68e24a7f5691a7a805a22af292d"
+    docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:afd5468a423fe089f1437d525fdc19c704296f723958739a6fe226caa01fba1c"
     cpu: threads
     memory: mem_gb + " GB"
     disk: disk_size + " GB"
