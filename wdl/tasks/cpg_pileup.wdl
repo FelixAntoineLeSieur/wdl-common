@@ -81,7 +81,7 @@ task cpg_pileup {
   Int disk_size = ceil((size(haplotagged_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
   command <<<
-    set -euo pipefail
+    set -eu
 
     aligned_bam_to_cpg_scores --version
 
@@ -100,7 +100,8 @@ task cpg_pileup {
         mv --verbose "~{out_prefix}.${infix}.bw" "~{out_prefix}.cpg_pileup.${infix}.bw"
       fi
       if [ -f "~{out_prefix}.${infix}.bed.gz" ]; then
-        zcat "~{out_prefix}.${infix}.bed.gz" | wc --lines > "~{out_prefix}.${infix}.bed.count"
+        zgrep --invert-match '^#' "~{out_prefix}.${infix}.bed.gz" \
+          | wc --lines > "~{out_prefix}.${infix}.bed.count" || true  # ignore files with no lines
         mv --verbose "~{out_prefix}.${infix}.bed.gz" "~{out_prefix}.cpg_pileup.${infix}.bed.gz"
         mv --verbose "~{out_prefix}.${infix}.bed.gz.tbi" "~{out_prefix}.cpg_pileup.${infix}.bed.gz.tbi"
       fi
@@ -117,8 +118,8 @@ task cpg_pileup {
     File?  combined_bw             = "~{out_prefix}.cpg_pileup.combined.bw"
     File?  hap1_bw                 = "~{out_prefix}.cpg_pileup.hap1.bw"
     File?  hap2_bw                 = "~{out_prefix}.cpg_pileup.hap2.bw"
-    String stat_hap1_cpg_count     = read_string("~{out_prefix}.hap1.bed.count")
-    String stat_hap2_cpg_count     = read_string("~{out_prefix}.hap2.bed.count")
+    String stat_hap1_cpg_count    = read_string("~{out_prefix}.hap1.bed.count")
+    String stat_hap2_cpg_count    = read_string("~{out_prefix}.hap2.bed.count")
     String stat_combined_cpg_count = read_string("~{out_prefix}.combined.bed.count")
   }
 
