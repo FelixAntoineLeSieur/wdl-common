@@ -78,7 +78,7 @@ workflow pharmcat {
     File ref_fasta
     File ref_index
 
-    String pharmcat_version
+    String pharmcat_version = "2.15.4"
     File pharmcat_positions
     File pharmcat_positions_index
     Int pharmcat_min_coverage
