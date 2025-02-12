@@ -6,8 +6,7 @@
   "deepvariant.ref_fasta": "File",
   "deepvariant.ref_index": "File",
   "deepvariant.ref_name": "String",
-  "deepvariant.deepvariant_version": "String",
-  "deepvariant.custom_deepvariant_model_tar": "File? (optional)",
+  "deepvariant.deepvariant_version": "String (optional, default = \"1.8.0\")",
   "deepvariant.gpu": "Boolean",
   "deepvariant.default_runtime_attributes": {
     "max_retries": "Int",
