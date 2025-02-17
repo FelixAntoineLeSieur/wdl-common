@@ -1,34 +1,18 @@
 version 1.0
 
 import "../structs.wdl"
-import "../../../humanwgs_structs.wdl"
 
-task write_ped_phrank {
+task write_phrank {
   meta {
-    description: "Create a tab-delimited PLINK pedigree (PED) format and calculate Phrank phenotype match score for every gene."
+    description: "Calculate Phrank phenotype match score for every gene."
   }
 
   parameter_meta {
-    id: {
-      name: "Family ID if passing a Family struct. Sample ID if passing a single sample."
-    }
-    family: {
-      name: "Family struct (required if passing a Family)."
-    }
-    sex: {
-      name: "Sample sex (required if passing a single sample)."
-    }
     phenotypes: {
       name: "Comma delimited string of HPO terms for phenotypes."
     }
-    disk_size: {
-      name: "Disk size in GB"
-    }
     runtime_attributes: {
       name: "Runtime attribute structure"
-    }
-    pedigree: {
-      name: "PLINK pedigree (PED) format"
     }
     phrank_lookup: {
       name: "Phrank scores: <gene_symbol><TAB><phrank_score>"
@@ -36,46 +20,16 @@ task write_ped_phrank {
   }
 
   input {
-    String id
-
-    Family? family
-    String? sex
-
     String phenotypes
-
-    Int disk_size = 1
 
     RuntimeAttributes runtime_attributes
   }
 
   Int threads = 1
   Int mem_gb  = 2
+  Int disk_size = 1
 
   command <<<
-    set -euo pipefail
-
-    if ~{defined(family)}; then
-      echo "Family struct provided. Converting to PED format."
-    json2ped.py <(jq '.[0]' ~{write_json(select_all([family]))}) > ~{id}.ped
-    else
-      echo "Family struct not provided. Creating single sample PED file."
-      # shellcheck disable=SC2194
-      case ~{if defined(sex) then sex else "."} in
-        MALE | M | male | m | Male)
-          SEX="1"
-          ;;
-        FEMALE | F | female | f | Female)
-          SEX="2"
-          ;;
-        *)
-          SEX="."
-          ;;
-      esac
-      echo -e "~{id}\t~{id}\t.\t.\t$SEX\t2" > ~{id}.ped
-    fi
-
-    cat ~{id}.ped
-
     # clean up common potential issues with phenotypes string
     PHENOTYPES="~{phenotypes}"
     PHENOTYPES="${PHENOTYPES// /}"   # Remove spaces
@@ -92,12 +46,11 @@ task write_ped_phrank {
       "${ENSEMBL_TO_HPO_TSV}" \
       "${ENSEMBL_TO_HGNC}" \
       "${PHENOTYPES}" \
-      ~{id}_phrank.tsv
+      phrank.tsv
   >>>
 
   output {
-    File pedigree      = "~{id}.ped"
-    File phrank_lookup = "~{id}_phrank.tsv"
+    File phrank_lookup = "phrank.tsv"
   }
 
   runtime {
