@@ -47,12 +47,6 @@ workflow pharmcat {
     default_runtime_attributes: {
       name: "Runtime attribute structure"
     }
-    pharmcat_missing_pgx_vcf: {
-      name: "PharmCAT missing PGx VCF"
-    }
-    pharmcat_preprocessed_filtered_vcf: {
-      name: "PharmCAT preprocessed filtered VCF"
-    }
     pharmcat_match_json: {
       name: "PharmCAT match JSON"
     }
