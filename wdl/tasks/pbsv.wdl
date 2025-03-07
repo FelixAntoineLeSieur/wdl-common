@@ -128,7 +128,7 @@ task pbsv_call {
     Int? shard_index
     Array[String]? regions
 
-    Int mem_gb = if select_first([sample_count, 1]) > 3 then 96 else 64
+    Int mem_gb = if select_first([sample_count, 1]) > 3 then 96 else 72
 
     RuntimeAttributes runtime_attributes
   }
