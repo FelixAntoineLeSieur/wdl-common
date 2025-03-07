@@ -586,7 +586,7 @@ task deepvariant_postprocess_variants {
     docker: docker_image
     cpu: threads
     memory: mem_gb + " GB"
-    time_minutes: "180"
+    time_minutes: "240"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
