@@ -83,7 +83,7 @@ task mosdepth {
     #My thresholds capture:
     cat << EOF > thresholdCoverage.py
     import sys, pandas as pd
-    df=pd.read_csv('~{out_prefix}.mosdepth.thresholds.bed.gz', sep='\t')
+    df=pd.read_csv('~{out_prefix}.thresholds.bed.gz', sep='\t')
     fiveX=(df["5X"].sum())/3200000000
     twentyX=(df["20X"].sum())/3200000000
     fiftyX=(df["50X"].sum())/3200000000
