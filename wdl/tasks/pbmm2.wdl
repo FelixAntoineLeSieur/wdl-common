@@ -35,9 +35,6 @@ task pbmm2_align_wgs {
     aligned_bam_index: {
       name: "Aligned BAM index"
     }
-    bam_stats: {
-      name: "BAM stats"
-    }
   }
 
   input {
@@ -61,29 +58,6 @@ task pbmm2_align_wgs {
 
   command <<<
     set -euo pipefail
-
-    cat << EOF > extract_read_length_and_qual.py
-    import math, pysam
-    MAX_QV = 60
-    save = pysam.set_verbosity(0)  # suppress [E::idx_find_and_load]
-    bamin = pysam.AlignmentFile('~{bam}', check_sq=False)
-    pysam.set_verbosity(save)  # restore warnings
-    for b in bamin:
-      if b.has_tag('rq'):  # get read quality from "rq" BAM tag if available
-        errorrate = 1.0 - b.get_tag('rq')
-        if math.isnan(b.get_tag('rq')):
-          print(f'Warning: read {b.query_name} has tag rq:f:nan.', file=sys.stderr)
-          continue
-        readqv = MAX_QV if errorrate == 0 else math.floor(-10 * math.log10(errorrate))
-      else:
-        readqv = math.nan
-      print(f"{b.query_name.split('/')[0]}\t{b.query_name}\t{len(b.query_sequence)}\t{readqv}")
-    bamin.close()
-    EOF
-
-    python3 ./extract_read_length_and_qual.py \
-    | gzip --stdout > ~{sample_id}.~{movie}.read_length_and_quality.tsv.gz &
-    BAM_STATS_PID=$!
 
     cat << EOF > detect_bam_tags.py
     import json, pysam
@@ -153,14 +127,11 @@ task pbmm2_align_wgs {
       mv --verbose aligned.bam ~{sample_id}.~{movie}.~{ref_name}.aligned.bam
       mv --verbose aligned.bam.bai ~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai
     fi
-
-    wait ${BAM_STATS_PID}
   >>>
 
   output {
     File aligned_bam       = "~{sample_id}.~{movie}.~{ref_name}.aligned.bam"
     File aligned_bam_index = "~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai"
-    File bam_stats         = "~{sample_id}.~{movie}.read_length_and_quality.tsv.gz"
   }
 
   runtime {
