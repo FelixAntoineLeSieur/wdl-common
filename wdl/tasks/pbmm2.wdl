@@ -53,15 +53,15 @@ task pbmm2_align_wgs {
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads   = 24
-  Int mem_gb    = ceil(threads * 4)
+  Int threads   = 1
+  Int mem_gb    = 1 #ceil(threads * 4)
   Int disk_size = ceil(size(bam, "GB") * 3 + size(ref_fasta, "GB") + 70)
 
   String movie = basename(bam, ".bam")
 
   command <<<
     set -euo pipefail
-
+    printenv
     cat << EOF > extract_read_length_and_qual.py
     import math, pysam
     MAX_QV = 60
@@ -123,7 +123,7 @@ task pbmm2_align_wgs {
 
     pbmm2 align \
       --num-threads ~{threads} \
-      --sort-memory 4G \
+      --sort-memory 6G \
       --preset HIFI \
       --sample ~{sample_id} \
       --log-level INFO \
@@ -164,11 +164,11 @@ task pbmm2_align_wgs {
     docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:24218cb5cbc68d1fd64db14a9dc38263d3d931c74aca872c998d12ef43020ef0"
     cpu: threads
     memory: mem_gb + " GB"
-    time_minutes: "1440"
+    time_minutes: "3"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
-    maxRetries: runtime_attributes.max_retries
+    maxRetries: 0
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
   }
