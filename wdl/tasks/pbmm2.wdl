@@ -121,6 +121,10 @@ task pbmm2_align_wgs {
 
     pbmm2 --version
 
+    cp ~{ref_fasta} /mnt/miniwdl_task_container/work/tmp/
+    cp ~{ref_index} /mnt/miniwdl_task_container/work/tmp/
+    cp ~{bam} /mnt/miniwdl_task_container/work/tmp/
+
     pbmm2 align \
       --num-threads ~{threads} \
       --sort-memory 6G \
@@ -130,10 +134,12 @@ task pbmm2_align_wgs {
       --sort \
       ~{true='--strip' false='' strip_kinetics} \
       --unmapped \
-      ~{ref_fasta} \
-      ~{bam} \
-      aligned.bam
-
+      /mnt/miniwdl_task_container/work/tmp/~{ref_fasta} \
+      /mnt/miniwdl_task_container/work/tmp/~{bam} \
+      /mnt/miniwdl_task_container/work/tmp/aligned.bam
+    
+    cp /mnt/miniwdl_task_container/work/tmp/aligned.bam .
+    
     if [ "$haplotagged" = true ]; then
       # remove haplotype tags
       samtools view \
