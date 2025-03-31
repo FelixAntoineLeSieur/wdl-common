@@ -23,8 +23,8 @@ task bam_stats {
     runtime_attributes: {
       name: "Runtime attribute structure"
     }
-    read_length_and_quality: {
-      name: "Read Length and Quality"
+    bam_statistics: {
+      name: "Per record read length, read quality, and alignment metrics"
     }
     read_length_plot: {
       name: "Read length histogram"
@@ -197,12 +197,12 @@ task bam_stats {
     File   mapq_distribution_plot   = "~{sample_id}.~{ref_name}.mapq_distribution.png"
     File   mg_distribution_plot     = "~{sample_id}.~{ref_name}.mg_distribution.png"
     String stat_num_reads           = read_string("num_reads.txt")
-    String stat_mapped_read_count   = read_string("mapped_read_count.txt")
-    String stat_mapped_percent      = read_string("mapped_percent.txt")
     String stat_read_length_mean    = read_string("read_length_mean.txt")
     String stat_read_length_median  = read_string("read_length_median.txt")
     String stat_read_quality_mean   = read_string("read_quality_mean.txt")
     String stat_read_quality_median = read_string("read_quality_median.txt")
+    String stat_mapped_read_count   = read_string("mapped_read_count.txt")
+    String stat_mapped_percent      = read_string("mapped_percent.txt")
   }
 
   runtime {

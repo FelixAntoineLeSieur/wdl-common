@@ -44,6 +44,7 @@ task samtools_merge {
 
     samtools merge \
       ~{if threads > 1 then "--threads " + (threads - 1) else ""} \
+      -c -p \
       -o ~{out_prefix}.bam \
       ~{sep=' ' bams}
 
