@@ -51,6 +51,15 @@ task trgt {
     vcf_index: {
       name: "TRGT repeats VCF index"
     }
+    stat_genotyped_count: {
+      name: "Number of genotyped loci"
+    }
+    stat_uncalled_count: {
+      name: "Number of uncalled loci"
+    }
+    msg: {
+      name: "Array of messages"
+    }
   }
 
   input {
@@ -83,7 +92,11 @@ task trgt {
   command <<<
     set -euo pipefail
 
-    echo ~{if defined(sex) then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT."}
+    touch messages.txt
+
+    if [ "~{defined(sex)}" != "true" ]; then
+      echo "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT."} >> messages.txt
+    fi
 
     trgt --version
 
@@ -138,6 +151,7 @@ task trgt {
     File   vcf_index            = "~{out_prefix}.trgt.sorted.vcf.gz.tbi"
     String stat_genotyped_count = read_string("genotyped_count.txt")
     String stat_uncalled_count  = read_string("uncalled_count.txt")
+    Array[String] msg           = read_lines("messages.txt")
   }
 
   runtime {

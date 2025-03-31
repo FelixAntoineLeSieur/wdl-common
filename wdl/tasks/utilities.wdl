@@ -67,11 +67,17 @@ task consolidate_stats {
     stats: {
       name: "Stats"
     }
+    msg_array: {
+      name: "Array of messages"
+    }
     runtime_attributes: {
       name: "Runtime attribute structure"
     }
     output_tsv: {
       name: "Output TSV"
+    }
+    messages: {
+      name: "Messages TXT"
     }
   }
 
@@ -79,6 +85,7 @@ task consolidate_stats {
     String id
 
     Map[String, Array[String]] stats
+    Array[String] msg_array
 
     RuntimeAttributes runtime_attributes
   }
@@ -107,10 +114,13 @@ task consolidate_stats {
     jq -cr 'to_entries[] | [.key, (.value | flatten[])] | @tsv' < ~{write_json(stats)} \
     | python3 ./transpose.py \
     > ~{id}.stats.txt
+
+    sed '/^[[:space:]]*$/d' ~{write_lines(msg_array)} > ~{id}.messages.txt
   >>>
 
   output {
     File output_tsv = "~{id}.stats.txt"
+    File messages   = "~{id}.messages.txt"
   }
 
   runtime {

@@ -78,6 +78,9 @@ task hificnv {
     stat_DEL_sum: {
       name: "Total length of passing deletions (Mbp)"
     }
+    msg: {
+      name: "Array of messages"
+    }
   }
 
   input {
@@ -112,7 +115,11 @@ task hificnv {
   command <<<
     set -euo pipefail
 
-    echo ~{if defined(sex) then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for HiFiCNV."}
+    touch messages.txt
+
+    if [ "~{defined(sex)}" != "true" ]; then
+      echo "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for HiFiCNV."} >> messages.txt
+    fi
 
     hificnv --version
     bcftools --version
@@ -178,6 +185,7 @@ task hificnv {
     String stat_DUP_sum     = read_string("stat_DUP_sum.txt")
     String stat_DEL_count   = read_string("stat_DEL_count.txt")
     String stat_DEL_sum     = read_string("stat_DEL_sum.txt")
+    Array[String] msg       = read_lines("messages.txt")
   }
 
   runtime {
