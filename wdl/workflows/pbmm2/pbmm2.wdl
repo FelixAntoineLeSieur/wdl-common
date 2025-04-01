@@ -111,8 +111,8 @@ task split_input_bam {
 
   String movie = basename(bam, ".bam")
 
-  Int threads   = 24
-  Int mem_gb    = 24
+  Int threads   = 16
+  Int mem_gb    = 32
   Int disk_size = ceil(size(bam, "GB") * 3 + 20)
 
   command <<<
@@ -121,7 +121,6 @@ task split_input_bam {
     touch messages.txt
 
     INBAM="~{bam}"
-
 
     # Check for presence of alignment, basemod, and kinetics tags
     cat << EOF > detect_bam_tags.py
@@ -160,7 +159,7 @@ task split_input_bam {
     # reset BAM and strip kinetics/haplotype tags if present
     if [ "$aligned" = true ] || [ "$kinetics" = true ]; then
       samtools --version
-      time samtools reset \
+      samtools reset \
         ~{if threads > 1 then "-@ " + (threads - 1) else ""} \
         --remove-tag fi,ri,fp,rp,ip,pw,HP,PS,PC \
         -o ~{movie}.reset.bam \
@@ -171,10 +170,10 @@ task split_input_bam {
     # if chunking is desired, index the input BAM and list ZMWs
     if [ "~{max_reads_per_chunk}" -gt "1" ]; then
       pbindex --version
-      time pbindex --num-threads ~{threads} $INBAM
+      pbindex --num-threads ~{threads} $INBAM
 
       zmwfilter --version
-      time zmwfilter --num-threads ~{threads} --show-all $INBAM > ~{movie}.zmws.txt
+      zmwfilter --num-threads ~{threads} --show-all $INBAM > ~{movie}.zmws.txt
 
       read -r n_records <<< "$(wc -l ~{movie}.zmws.txt | cut -f1 -d' ')"
 
@@ -191,7 +190,7 @@ task split_input_bam {
         parallel --version
         # shellcheck disable=SC2012
         ls chunk_* | parallel -v -j ~{threads} \
-          time zmwfilter --num-threads 1 --include {} $INBAM ~{movie}.{}.bam
+          zmwfilter --num-threads 1 --include {} $INBAM ~{movie}.{}.bam
 
         # if the input BAM was reset, remove so that it is not included in the output
         rm --force --verbose ~{movie}.reset.bam
@@ -207,7 +206,7 @@ task split_input_bam {
   runtime {
     docker: "~{runtime_attributes.container_registry}/pbtk@sha256:67cd438ed9f343f90f058108170ddbff8fb1d9b5c193f4016be42b737ee2e73c"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -265,7 +264,7 @@ task pbmm2_align_wgs {
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads   = 24
+  Int threads   = 32
   Int mem_gb    = ceil(threads * 4)
   Int disk_size = ceil(size(bam, "GB") * 2 + size(ref_fasta, "GB") + 70)
 
@@ -301,7 +300,7 @@ task pbmm2_align_wgs {
   runtime {
     docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:5f3f4d1f5dbea5cd4c388ee26b2fecbbb7dbcef449343633e039dca3d3725859"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
