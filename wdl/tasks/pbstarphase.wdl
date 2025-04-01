@@ -91,7 +91,7 @@ task pbstarphase_diplotype {
   runtime {
     docker: "~{runtime_attributes.container_registry}/pbstarphase@sha256:f7bbbe3814ef318a5ee89dca7263d1afda00da501642604c193629303a2ada3b"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

@@ -59,7 +59,7 @@ task mosdepth {
   }
 
   Int threads   = 4
-  Int mem_gb    = 4
+  Int mem_gb    = 8
   Int disk_size = ceil(size(aligned_bam, "GB") + 20)
 
   Float max_norm_female_chrY_depth = 0.1
@@ -150,7 +150,7 @@ task mosdepth {
   runtime {
     docker: "~{runtime_attributes.container_registry}/mosdepth@sha256:63f7a5d1a4a17b71e66d755d3301a951e50f6b63777d34dab3ee9e182fd7acb1"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

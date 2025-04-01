@@ -73,7 +73,7 @@ task trgt {
   }
 
   Int threads   = 32
-  Int mem_gb    = 32
+  Int mem_gb    = 64
   Int disk_size = ceil((size(aligned_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
   Int samtools_sort_threads = 8
@@ -112,7 +112,7 @@ task trgt {
 
     samtools sort \
       --threads ~{samtools_sort_threads} \
-      -m 400M \
+      -m 800M \
       -o ~{out_prefix}.trgt.spanning.sorted.bam \
       ~{out_prefix}.trgt.spanning.bam
 
@@ -143,7 +143,7 @@ task trgt {
   runtime {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:be7e6ef589a31f4de5d2ed4725dfb34b4b23cb9a440577b606e8f7bfee06526b"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -225,7 +225,7 @@ task trgt_merge {
   runtime {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:be7e6ef589a31f4de5d2ed4725dfb34b4b23cb9a440577b606e8f7bfee06526b"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -293,7 +293,7 @@ task coverage_dropouts {
   runtime {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:be7e6ef589a31f4de5d2ed4725dfb34b4b23cb9a440577b606e8f7bfee06526b"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

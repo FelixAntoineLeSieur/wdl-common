@@ -106,7 +106,7 @@ task hificnv {
   File expected_bed = if select_first([sex, "FEMALE"]) == "MALE" then expected_male_bed else expected_female_bed
 
   Int threads   = 8
-  Int mem_gb    = threads * 2
+  Int mem_gb    = 16
   Int disk_size = ceil((size(aligned_bam, "GB") + size(ref_fasta, "GB")) + 20)
 
   command <<<
@@ -183,7 +183,7 @@ task hificnv {
   runtime {
     docker: "~{runtime_attributes.container_registry}/hificnv@sha256:c4764a70c8c2028edb1cdb4352997269947c5076ddd1aeaeef6c5076c630304d"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

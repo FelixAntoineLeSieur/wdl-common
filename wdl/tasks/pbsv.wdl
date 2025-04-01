@@ -35,7 +35,7 @@ task pbsv_discover {
   }
 
   Int threads   = 2
-  Int mem_gb    = 10
+  Int mem_gb    = 16
   Int disk_size = ceil((size(aligned_bam, "GB") + size(trf_bed, "GB")) * 2 + 20)
 
   String out_prefix = basename(aligned_bam, ".bam")
@@ -60,7 +60,7 @@ task pbsv_discover {
   runtime {
     docker: "~{runtime_attributes.container_registry}/pbsv@sha256:3a8529853c1e214809dcdaacac0079de70d0c037b41b43bb8ba7c3fc5f783e26"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -192,7 +192,7 @@ task pbsv_call {
   runtime {
     docker: "~{runtime_attributes.container_registry}/pbsv@sha256:3a8529853c1e214809dcdaacac0079de70d0c037b41b43bb8ba7c3fc5f783e26"
     cpu: threads
-    memory: "~{mem_gb} GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
