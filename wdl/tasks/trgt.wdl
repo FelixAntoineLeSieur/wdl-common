@@ -150,6 +150,7 @@ task trgt {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -232,6 +233,7 @@ task trgt_merge {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -300,5 +302,6 @@ task coverage_dropouts {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }

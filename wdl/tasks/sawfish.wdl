@@ -103,6 +103,7 @@ task sawfish_discover {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -218,5 +219,6 @@ task sawfish_call {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }

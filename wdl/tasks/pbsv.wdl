@@ -67,6 +67,7 @@ task pbsv_discover {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -199,5 +200,6 @@ task pbsv_call {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }

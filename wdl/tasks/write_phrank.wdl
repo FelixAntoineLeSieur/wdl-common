@@ -63,5 +63,6 @@ task write_phrank {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }

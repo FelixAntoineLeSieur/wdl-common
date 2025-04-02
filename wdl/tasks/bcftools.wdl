@@ -226,6 +226,7 @@ task bcftools_stats_roh_small_variants {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -304,6 +305,7 @@ task concat_pbsv_vcf {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -393,6 +395,7 @@ task split_vcf_by_sample {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -463,6 +466,7 @@ task bcftools_merge {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -564,5 +568,6 @@ task sv_stats {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }

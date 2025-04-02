@@ -270,6 +270,7 @@ task deepvariant_make_examples {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -352,6 +353,7 @@ task deepvariant_call_variants_cpu {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -440,6 +442,7 @@ task deepvariant_call_variants_gpu {
     acceleratorCount: 1  # !UnknownRuntimeKey
     acceleratorType: runtime_attributes.gpuType  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
@@ -572,5 +575,6 @@ task deepvariant_postprocess_variants {
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
