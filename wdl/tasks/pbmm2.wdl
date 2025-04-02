@@ -14,6 +14,9 @@ task pbmm2_align_wgs {
     prealigned_bam: {
       name: "Name of Output directory where the aligned bam is"
     }
+    prealigned_bam_bai: {
+      name: "Name of Output directory where the aligned bam is"
+    }
     bam: {
       name: "HiFi reads (BAM)"
     }
@@ -46,7 +49,8 @@ task pbmm2_align_wgs {
   input {
     String sample_id
     File bam
-    String prealigned_bam
+    File prealigned_bam
+    File prealigned_bam_bai
     File ref_fasta
     File ref_index
     String ref_name
@@ -57,7 +61,7 @@ task pbmm2_align_wgs {
   }
 
   Int threads   = 1
-  Int mem_gb    = 1 #ceil(threads * 4)
+  Int mem_gb    = ceil(threads * 4)
   Int disk_size = ceil(size(bam, "GB") * 3 + size(ref_fasta, "GB") + 70)
   String movie = basename(bam, ".bam")
 
@@ -186,8 +190,10 @@ task pbmm2_align_wgs {
     #   mv --verbose aligned.bam.bai ~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai
     # fi
 
-    mv --verbose ~{prealigned_bam} ~{sample_id}.~{movie}.~{ref_name}.aligned.bam
-    mv --verbose ~{prealigned_bam}.bai ~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai
+    cp --verbose ~{prealigned_bam} ./aligned.bam
+    cp --verbose ~{prealigned_bam_bai} ./aligned.bam.bai
+    mv --verbose aligned.bam ~{sample_id}.~{movie}.~{ref_name}.aligned.bam
+    mv --verbose aligned.bam.bai ~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai
 
     wait ${BAM_STATS_PID}
   >>>
