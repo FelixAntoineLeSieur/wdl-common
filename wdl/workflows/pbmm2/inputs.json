@@ -11,6 +11,7 @@
     "max_retries": "Int",
     "zones": "String",
     "gpuType": "String",
-    "container_registry": "String"
+    "container_registry": "String",
+    "cpuPlatform": "String"
   }
 }
