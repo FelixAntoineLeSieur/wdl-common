@@ -8,10 +8,6 @@ task sawfish_discover {
   }
 
   parameter_meta {
-    sex: {
-      name: "Sample sex",
-      choices: ["MALE", "FEMALE"]
-    }
     aligned_bam: {
       name: "Aligned BAM"
     }
@@ -23,12 +19,6 @@ task sawfish_discover {
     }
     ref_index: {
       name: "Reference FASTA index"
-    }
-    expected_male_bed: {
-      name: "Expected CN BED for sample with XY karyotype"
-    }
-    expected_female_bed: {
-      name: "Expected CN BED for sample with XX karyotype"
     }
     out_prefix: {
       name: "Output prefix"
@@ -42,23 +32,16 @@ task sawfish_discover {
   }
 
   input {
-    String? sex
-
     File aligned_bam
     File aligned_bam_index
 
     File ref_fasta
     File ref_index
 
-    File expected_male_bed
-    File expected_female_bed
-
     String out_prefix
 
     RuntimeAttributes runtime_attributes
   }
-
-  File expected_bed = if select_first([sex, "FEMALE"]) == "MALE" then expected_male_bed else expected_female_bed
 
   Int threads   = 16
   Int mem_gb    = threads * 8
@@ -75,13 +58,10 @@ task sawfish_discover {
 
     sawfish --version
 
-    echo ~{if defined(sex) then "" else "Sex is not defined for ~{out_prefix}.  Defaulting to karyotype XX for sawfish."}
-
     sawfish discover \
       --threads ~{threads} \
       --disable-path-canonicalization \
       --ref ~{basename(ref_fasta)} \
-      --expected-cn ~{basename(expected_bed)} \
       --bam ~{basename(aligned_bam)} \
       --output-dir ~{out_prefix}
 
