@@ -182,7 +182,8 @@ task sawfish_call {
     mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz.tbi ~{out_prefix}.vcf.gz.tbi
     mv --verbose ~{out_prefix}/supporting_reads.json.gz ~{out_prefix}.supporting_reads.json.gz
 
-    rm --recursive --force --verbose $SAMPLES
+    # shellcheck disable=SC2086,SC2048
+    rm --recursive --force --verbose ${SAMPLES[*]}
   >>>
 
   output {
