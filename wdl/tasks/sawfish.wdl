@@ -52,8 +52,8 @@ task sawfish_discover {
 
     # sawfish stores relative filepaths of input files in the output directory
     # symlink input files into the working directory
-    for i in ~{aligned_bam} ~{aligned_bam_index} ~{ref_fasta} ~{ref_index} ~{expected_bed}; do
-      ln -s $i .
+    for i in ~{aligned_bam} ~{aligned_bam_index} ~{ref_fasta} ~{ref_index}; do
+      ln --symbolic $i .
     done
 
     sawfish --version
@@ -65,8 +65,8 @@ task sawfish_discover {
       --bam ~{basename(aligned_bam)} \
       --output-dir ~{out_prefix}
 
-    tar -cvf ~{out_prefix}.tar ~{out_prefix}
-
+    tar --create --verbose --file ~{out_prefix}.tar ~{out_prefix}
+    rm --recursive --force --verbose ~{out_prefix}
   >>>
 
   output {
@@ -149,12 +149,12 @@ task sawfish_call {
   Int disk_size = ceil(size(aligned_bams, "GB") + size(ref_fasta, "GB") + (size(discover_tars, "GB")) * 2 + 20)
 
   command <<<
-    set -xeuo pipefail
+    set -euo pipefail
 
     # sawfish stores relative filepaths of input files in the output directory
     # symlink input files into the working directory
     for i in ~{sep=" " aligned_bams} ~{sep=" " aligned_bam_indices} ~{ref_fasta} ~{ref_index}; do
-      ln -s $i .
+      ln --symbolic $i .
     done
 
     # unpack sawfish discover output
@@ -165,7 +165,7 @@ task sawfish_call {
     while read -r discover_tar || [[ -n "${discover_tar}" ]]; do
       sampledir=$(basename -s .tar "${discover_tar}")
       SAMPLES+=("$sampledir")
-      tar xvf "${discover_tar}"
+      tar --no-same-owner --extract --verbose --file "${discover_tar}"
     done < ~{write_lines(discover_tars)}
 
     sawfish --version
@@ -178,9 +178,11 @@ task sawfish_call {
       --output-dir ~{out_prefix}
 
     # rename the output files to be more informative
-    mv ~{out_prefix}/genotyped.sv.vcf.gz ~{out_prefix}.vcf.gz
-    mv ~{out_prefix}/genotyped.sv.vcf.gz.tbi ~{out_prefix}.vcf.gz.tbi
-    mv ~{out_prefix}/supporting_reads.json.gz ~{out_prefix}.supporting_reads.json.gz
+    mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz ~{out_prefix}.vcf.gz
+    mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz.tbi ~{out_prefix}.vcf.gz.tbi
+    mv --verbose ~{out_prefix}/supporting_reads.json.gz ~{out_prefix}.supporting_reads.json.gz
+
+    rm --recursive --force --verbose $SAMPLES
   >>>
 
   output {
