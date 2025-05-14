@@ -155,7 +155,7 @@ task trgt {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/trgt@sha256:be7e6ef589a31f4de5d2ed4725dfb34b4b23cb9a440577b606e8f7bfee06526b"
+    docker: "~{runtime_attributes.container_registry}/trgt@sha256:301fd3f8c0174213e82dbf942e6f2259aab31a66a7dc3355a3dfc8fcd4286284"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
@@ -238,7 +238,7 @@ task trgt_merge {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/trgt@sha256:be7e6ef589a31f4de5d2ed4725dfb34b4b23cb9a440577b606e8f7bfee06526b"
+    docker: "~{runtime_attributes.container_registry}/trgt@sha256:301fd3f8c0174213e82dbf942e6f2259aab31a66a7dc3355a3dfc8fcd4286284"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
@@ -307,7 +307,7 @@ task coverage_dropouts {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/trgt@sha256:be7e6ef589a31f4de5d2ed4725dfb34b4b23cb9a440577b606e8f7bfee06526b"
+    docker: "~{runtime_attributes.container_registry}/trgt@sha256:301fd3f8c0174213e82dbf942e6f2259aab31a66a7dc3355a3dfc8fcd4286284"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
