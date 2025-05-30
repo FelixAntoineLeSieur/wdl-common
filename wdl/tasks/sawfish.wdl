@@ -8,6 +8,13 @@ task sawfish_discover {
   }
 
   parameter_meta {
+    sample_id: {
+      name: "Sample ID"
+    }
+    sex: {
+      name: "Sample sex",
+      choices: ["MALE", "FEMALE"]
+    }
     aligned_bam: {
       name: "Aligned BAM"
     }
@@ -20,6 +27,24 @@ task sawfish_discover {
     ref_index: {
       name: "Reference FASTA index"
     }
+    exclude_bed: {
+      name: "Regions to exclude from CNV calls"
+    }
+    exclude_bed_index: {
+      name: "Regions to exclude from CNV calls (index)"
+    }
+    expected_male_bed: {
+      name: "Expected CN BED for sample with XY karyotype"
+    }
+    expected_female_bed: {
+      name: "Expected CN BED for sample with XX karyotype"
+    }
+    small_variant_vcf: {
+      name: "Small variant VCF"
+    }
+    small_variant_vcf_index: {
+      name: "Small variant VCF index"
+    }
     out_prefix: {
       name: "Output prefix"
     }
@@ -29,19 +54,36 @@ task sawfish_discover {
     discover_tar: {
       name: "Tarballed output of sawfish discover"
     }
+    msg: {
+      name: "Array of messages"
+    }
   }
 
   input {
+    String sample_id
+    String? sex
+
     File aligned_bam
     File aligned_bam_index
 
     File ref_fasta
     File ref_index
 
+    File exclude_bed
+    File exclude_bed_index
+
+    File expected_male_bed
+    File expected_female_bed
+
+    File small_variant_vcf
+    File small_variant_vcf_index
+
     String out_prefix
 
     RuntimeAttributes runtime_attributes
   }
+
+  File expected_bed = if select_first([sex, "FEMALE"]) == "MALE" then expected_male_bed else expected_female_bed
 
   Int threads   = 16
   Int mem_gb    = threads * 8
@@ -49,6 +91,12 @@ task sawfish_discover {
 
   command <<<
     set -euo pipefail
+
+    touch messages.txt
+
+    if [ "~{defined(sex)}" != "true" ]; then
+      echo "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for sawfish."} >> messages.txt
+    fi
 
     # sawfish stores relative filepaths of input files in the output directory
     # symlink input files into the working directory
@@ -63,6 +111,9 @@ task sawfish_discover {
       --disable-path-canonicalization \
       --ref ~{basename(ref_fasta)} \
       --bam ~{basename(aligned_bam)} \
+      --expected-cn ~{expected_bed} \
+      --cnv-excluded-regions ~{exclude_bed} \
+      --maf ~{small_variant_vcf} \
       --output-dir ~{out_prefix}
 
     tar --create --verbose --file ~{out_prefix}.tar ~{out_prefix}
@@ -71,10 +122,11 @@ task sawfish_discover {
 
   output {
     File discover_tar = "~{out_prefix}.tar"
+    Array[String] msg = read_lines("messages.txt")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:f995aaf97f27b3a4bb9b0b453566ce0b797c126e06007a4fc95ffc7912d78d8e"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:538513114e730c06c7d3b2d13593a24f4efb86c73b804c157a630d0407916ff0"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
@@ -93,6 +145,9 @@ task sawfish_call {
   }
 
   parameter_meta {
+    sample_ids: {
+      name: "Sample IDs"
+    }
     discover_tars: {
       name: "Tarballed output of sawfish discover"
     }
@@ -126,9 +181,20 @@ task sawfish_call {
     supporting_reads: {
       name: "Supporting reads JSON"
     }
+    copynum_bedgraph: {
+      name: "Copy number bedgraph"
+    }
+    depth_bw: {
+      name: "Depth bedgraph"
+    }
+    maf_bw: {
+      name: "MAF bedgraph"
+    }
   }
 
   input {
+    Array[String] sample_ids
+
     Array[File] discover_tars
 
     Array[File] aligned_bams
@@ -181,19 +247,36 @@ task sawfish_call {
     mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz ~{out_prefix}.vcf.gz
     mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz.tbi ~{out_prefix}.vcf.gz.tbi
     mv --verbose ~{out_prefix}/supporting_reads.json.gz ~{out_prefix}.supporting_reads.json.gz
+    touch copynum_bedgraph.list depth_bw.list maf_bw.list
+    for sample_id in ~{sep=" " sample_ids}; do
+      if [ "~{length(sample_ids)}" -gt 1 ]; then
+        PREFIX="${sample_id}.~{out_prefix}"
+      else
+        PREFIX="~{out_prefix}"
+      fi
+      mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/copynum.bedgraph ${PREFIX}.copynum.bedgraph \
+      && echo ${PREFIX}.copynum.bedgraph >> copynum_bedgraph.list
+      mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/depth.bw ${PREFIX}.depth.bw \
+      && echo ${PREFIX}.depth.bw >> depth_bw.list
+      mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/maf.bw ${PREFIX}.maf.bw \
+      && echo ${PREFIX}.maf.bw >> maf_bw.list
+    done
 
     # shellcheck disable=SC2086,SC2048
     rm --recursive --force --verbose ${SAMPLES[*]}
   >>>
 
   output {
-    File vcf               = "~{out_prefix}.vcf.gz"
-    File vcf_index         = "~{out_prefix}.vcf.gz.tbi"
-    File? supporting_reads = "~{out_prefix}.supporting_reads.json.gz"
+    File  vcf                    = "~{out_prefix}.vcf.gz"
+    File  vcf_index              = "~{out_prefix}.vcf.gz.tbi"
+    File? supporting_reads       = "~{out_prefix}.supporting_reads.json.gz"
+    Array[File] copynum_bedgraph = read_lines("copynum_bedgraph.list")
+    Array[File] depth_bw         = read_lines("depth_bw.list")
+    Array[File] maf_bw           = read_lines("maf_bw.list")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:f995aaf97f27b3a4bb9b0b453566ce0b797c126e06007a4fc95ffc7912d78d8e"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:538513114e730c06c7d3b2d13593a24f4efb86c73b804c157a630d0407916ff0"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
