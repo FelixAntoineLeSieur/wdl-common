@@ -62,7 +62,7 @@ workflow deepvariant {
     File ref_index
     String ref_name
 
-    String deepvariant_version = "1.8.0"
+    String deepvariant_version = "1.9.0"
 
     Boolean gpu
 
@@ -436,7 +436,6 @@ task deepvariant_call_variants_gpu {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
-    gpu: true
     gpuCount: 1
     gpuType: runtime_attributes.gpuType
     acceleratorCount: 1  # !UnknownRuntimeKey
