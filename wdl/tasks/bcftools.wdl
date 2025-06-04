@@ -330,6 +330,9 @@ task split_vcf_by_sample {
     split_vcf_index_names: {
       name: "Split VCF index names"
     }
+    exclude_uncalled: {
+      name: "Exclude uncalled genotypes (default: true)"
+    }
     runtime_attributes: {
       name: "Runtime attribute structure"
     }
@@ -349,6 +352,8 @@ task split_vcf_by_sample {
     Array[String] split_vcf_names
     Array[String] split_vcf_index_names
 
+    Boolean exclude_uncalled = true
+
     RuntimeAttributes runtime_attributes
   }
 
@@ -364,11 +369,11 @@ task split_vcf_by_sample {
     bcftools --version
 
     for sample_id in ~{sep=" " sample_ids}; do
-      # Extract sample, keeping only passing variants and excluding uncalled genotypes
+      # Extract sample, optionally excluding uncalled genotypes
       bcftools view \
         ~{if threads > 1 then "--threads " + (threads - 1) else ""} \
         --samples ${sample_id} \
-        --exclude-uncalled \
+        ~{true="--exclude-uncalled" false="" exclude_uncalled} \
         --output-type z \
         --output ${sample_id}.~{vcf_basename}.vcf.gz \
         ~{vcf}
