@@ -38,6 +38,9 @@ task paraphase {
     vcfs_tar: {
       name: "Paraphase VCFs tar"
     }
+    msg: {
+      name: "Messages"
+    }
   }
 
   input {
@@ -57,7 +60,9 @@ task paraphase {
   Int disk_size = ceil(size(aligned_bam, "GB") +size(ref_fasta, "GB") + 20)
 
   command <<<
-    set -euo pipefail
+    set -eu
+
+    touch messages.txt
 
     paraphase --version
 
@@ -65,7 +70,8 @@ task paraphase {
       --threads ~{threads} \
       --bam ~{aligned_bam} \
       --reference ~{ref_fasta} \
-      --out ./
+      --out ./ \
+      || echo "Paraphase failed for sample ~{sample_id}.  Check Paraphase logs for details." >> messages.txt
 
     # tarball the VCFs if they exist
     if ls ~{sample_id}_paraphase_vcfs/*.vcf &> /dev/null; then
@@ -74,14 +80,15 @@ task paraphase {
   >>>
 
   output {
-    File  out_json  = "~{sample_id}.paraphase.json"
-    File  bam       = "~{sample_id}.paraphase.bam"
-    File  bam_index = "~{sample_id}.paraphase.bam.bai"
-    File? vcfs_tar  = "~{sample_id}.paraphase_vcfs.tar.gz"
+    File? out_json    = "~{sample_id}.paraphase.json"
+    File? bam         = "~{sample_id}.paraphase.bam"
+    File? bam_index   = "~{sample_id}.paraphase.bam.bai"
+    File? vcfs_tar    = "~{sample_id}.paraphase_vcfs.tar.gz"
+    Array[String] msg = read_lines("messages.txt")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/paraphase@sha256:bf15a5f977fa6ee34f335e5a695d5f9c73fb7b7092703fbf3c94594949ea50d7"
+    docker: "~{runtime_attributes.container_registry}/paraphase@sha256:e2f904111a43e8f055681112294e0f05ff2839d9801fc01ac39a17c841016920"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
