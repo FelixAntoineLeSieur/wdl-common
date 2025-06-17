@@ -126,7 +126,7 @@ task sawfish_discover {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:538513114e730c06c7d3b2d13593a24f4efb86c73b804c157a630d0407916ff0"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:ad688e488241b2fcb7a1e2aa8036db8d8f51eca67a40273b2088199db09df9a6"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
@@ -243,9 +243,19 @@ task sawfish_call {
       ${SAMPLES[@]/#/$PREFIX} \
       --output-dir ~{out_prefix}
 
+    # sawshark annotation
+    sawshark \
+      --threads ~{(threads / 2)} \
+      --vcf ~{out_prefix}/genotyped.sv.vcf.gz \
+    | bcftools view - \
+      --threads ~{(threads / 2) - 1} \
+      --output-type z \
+      --output ~{out_prefix}.vcf.gz
+    bcftools index --tbi \
+      ~{if threads > 1 then "--threads " + (threads - 1) else ""} \
+      ~{out_prefix}.vcf.gz
+
     # rename the output files to be more informative
-    mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz ~{out_prefix}.vcf.gz
-    mv --verbose ~{out_prefix}/genotyped.sv.vcf.gz.tbi ~{out_prefix}.vcf.gz.tbi
     mv --verbose ~{out_prefix}/supporting_reads.json.gz ~{out_prefix}.supporting_reads.json.gz
     touch copynum_bedgraph.list depth_bw.list maf_bw.list
     for sample_id in ~{sep=" " sample_ids}; do
@@ -276,7 +286,7 @@ task sawfish_call {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:538513114e730c06c7d3b2d13593a24f4efb86c73b804c157a630d0407916ff0"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:ad688e488241b2fcb7a1e2aa8036db8d8f51eca67a40273b2088199db09df9a6"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
