@@ -126,7 +126,7 @@ task sawfish_discover {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:ad688e488241b2fcb7a1e2aa8036db8d8f51eca67a40273b2088199db09df9a6"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:dc7a955175967b4a5c4be9c438243332bc22f41e8240bb3b5c84699741248a44"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
@@ -186,6 +186,9 @@ task sawfish_call {
     }
     depth_bw: {
       name: "Depth bedgraph"
+    }
+    gc_bias_corrected_depth_bw: {
+      name: "GC bias corrected depth bedgraph"
     }
     maf_bw: {
       name: "MAF bedgraph"
@@ -268,6 +271,8 @@ task sawfish_call {
       && echo ${PREFIX}.copynum.bedgraph >> copynum_bedgraph.list
       mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/depth.bw ${PREFIX}.depth.bw \
       && echo ${PREFIX}.depth.bw >> depth_bw.list
+      mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/gc_bias_corrected_depth.bw ${PREFIX}.gc_bias_corrected_depth.bw \
+      && echo ${PREFIX}.gc_bias_corrected_depth.bw >> gc_bias_corrected_depth.bw.list
       mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/maf.bw ${PREFIX}.maf.bw \
       && echo ${PREFIX}.maf.bw >> maf_bw.list
     done
@@ -277,16 +282,17 @@ task sawfish_call {
   >>>
 
   output {
-    File  vcf                    = "~{out_prefix}.vcf.gz"
-    File  vcf_index              = "~{out_prefix}.vcf.gz.tbi"
-    File? supporting_reads       = "~{out_prefix}.supporting_reads.json.gz"
-    Array[File] copynum_bedgraph = read_lines("copynum_bedgraph.list")
-    Array[File] depth_bw         = read_lines("depth_bw.list")
-    Array[File] maf_bw           = read_lines("maf_bw.list")
+    File  vcf                              = "~{out_prefix}.vcf.gz"
+    File  vcf_index                        = "~{out_prefix}.vcf.gz.tbi"
+    File? supporting_reads                 = "~{out_prefix}.supporting_reads.json.gz"
+    Array[File] copynum_bedgraph           = read_lines("copynum_bedgraph.list")
+    Array[File] depth_bw                   = read_lines("depth_bw.list")
+    Array[File] gc_bias_corrected_depth_bw = read_lines("gc_bias_corrected_depth.bw.list")
+    Array[File] maf_bw                     = read_lines("maf_bw.list")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:ad688e488241b2fcb7a1e2aa8036db8d8f51eca67a40273b2088199db09df9a6"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:dc7a955175967b4a5c4be9c438243332bc22f41e8240bb3b5c84699741248a44"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
