@@ -70,7 +70,7 @@ task mitorsaw {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/mitorsaw@sha256:87c49411ab8fc82e2bd0ea9177c206a0f1b9dc972c5b5e64c534585581e10fe0"
+    docker: "~{runtime_attributes.container_registry}/mitorsaw@sha256:1509dbd7b0a815c7ceb3af52fddc93ef3544ae1858483139450fa0285f8dbe0c"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
