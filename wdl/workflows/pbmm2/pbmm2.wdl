@@ -116,7 +116,7 @@ task split_input_bam {
   Int disk_size = ceil(size(bam, "GB") * 3 + 20)
 
   command <<<
-    set -xeuo pipefail
+    set -euo pipefail
 
     touch messages.txt
 

@@ -293,11 +293,11 @@ task coverage_dropouts {
   Int disk_size = ceil((size(aligned_bam, "GB")) + 20)
 
   command <<<
-    set -euo pipefail
+    set -eu
 
     # Get coverage dropouts
     check_trgt_coverage.py \
-      ~{trgt_bed} \
+      <(zcat ~{trgt_bed} || cat ~{trgt_bed}) \
       ~{aligned_bam} \
     > ~{out_prefix}.trgt.dropouts.txt
   >>>
