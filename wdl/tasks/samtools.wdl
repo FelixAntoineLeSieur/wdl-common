@@ -128,6 +128,180 @@ task samtools_fasta {
   }
 }
 
+task subset_reference {
+  meta {
+    description: "Create a subset of a reference FASTA file based on a BED file."
+  }
+
+  parameter_meta {
+    bed: {
+      name: "Regions BED"
+    }
+    ref_fasta: {
+      name: "Reference FASTA"
+    }
+    ref_index: {
+      name: "Reference FASTA index"
+    }
+    out_prefix: {
+      name: "Output prefix"
+    }
+    runtime_attributes: {
+      name: "Runtime attribute structure"
+    }
+    fasta: {
+      name: "Output BAM"
+    }
+    fasta_index: {
+      name: "Output BAM index"
+    }
+  }
+
+  input {
+    File bed
+
+    Int slop_size = 10000
+
+    File ref_fasta
+    File ref_index
+
+    String out_prefix
+
+    RuntimeAttributes runtime_attributes
+  }
+
+  Int threads   = 4
+  Int mem_gb    = 4
+  Int disk_size = ceil(size(ref_fasta, "GB") * 2 + 20)
+
+  command <<<
+    set -euo pipefail
+
+    samtools --version
+
+    samtools faidx \
+      --region-file <(\
+        bedtools slop \
+          -b ~{slop_size} \
+          -g ~{ref_index} \
+          -i ~{bed} \
+        | awk '{{print $1":"$2"-"$3}}') \
+      ~{ref_fasta} \
+    > ~{out_prefix}.fasta
+
+    samtools faidx ~{out_prefix}.fasta
+  >>>
+
+  output {
+    File fasta = "~{out_prefix}.fasta"
+    File fasta_index = "~{out_prefix}.fasta.fai"
+  }
+
+  runtime {
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
+    cpu: threads
+    memory: mem_gb + " GiB"
+    disk: disk_size + " GB"
+    disks: "local-disk " + disk_size + " HDD"
+    preemptible: runtime_attributes.preemptible_tries
+    maxRetries: runtime_attributes.max_retries
+    awsBatchRetryAttempts: runtime_attributes.max_retries
+    zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
+  }
+}
+
+task subset_bam {
+  meta {
+    description: "Create a subset of an aligned BAM file based on a BED file."
+  }
+
+  parameter_meta {
+    bed: {
+      name: "Regions BED"
+    }
+    aligned_bam: {
+      name: "Aligned BAM"
+    }
+    aligned_bam_index: {
+      name: "Aligned BAM index"
+    }
+    ref_index: {
+      name: "Reference FASTA index"
+    }
+    slop_size: {
+      name: "Size in base pairs to extend the regions in the BED file."
+    }
+    out_prefix: {
+      name: "Output prefix"
+    }
+    runtime_attributes: {
+      name: "Runtime attribute structure"
+    }
+    bam: {
+      name: "Output BAM"
+    }
+    bam_index: {
+      name: "Output BAM index"
+    }
+  }
+
+  input {
+    File bed
+
+    File aligned_bam
+    File aligned_bam_index
+
+    File ref_index
+
+    Int slop_size = 10000
+
+    String out_prefix
+
+    RuntimeAttributes runtime_attributes
+  }
+
+  Int threads   = 4
+  Int mem_gb    = 4
+  Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
+
+  command <<<
+    set -euo pipefail
+
+    samtools --version
+
+    samtools view \
+      --threads ~{if threads > 1 then threads - 1 else 1} \
+      --targets-file <(\
+        bedtools slop \
+          -b ~{slop_size} \
+          -g ~{ref_index} \
+          -i ~{bed}) \
+      --output ~{out_prefix}.bam \
+      ~{aligned_bam}
+
+    samtools index --threads ~{if threads > 1 then threads - 1 else 1} ~{out_prefix}.bam
+  >>>
+
+  output {
+    File bam = "~{out_prefix}.bam"
+    File bam_index = "~{out_prefix}.bam.bai"
+  }
+
+  runtime {
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
+    cpu: threads
+    memory: mem_gb + " GiB"
+    disk: disk_size + " GB"
+    disks: "local-disk " + disk_size + " HDD"
+    preemptible: runtime_attributes.preemptible_tries
+    maxRetries: runtime_attributes.max_retries
+    awsBatchRetryAttempts: runtime_attributes.max_retries
+    zones: runtime_attributes.zones
+    cpuPlatform: runtime_attributes.cpuPlatform
+  }
+}
+
 task samtools_reset {
   meta {
     description: "Reset SAM/BAM files to remove unwanted tags."

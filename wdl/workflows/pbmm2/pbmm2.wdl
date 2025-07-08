@@ -241,6 +241,9 @@ task pbmm2_align_wgs {
     strip_kinetics: {
       name: "Strip kinetics tags"
     }
+    min_length: {
+      name: " Minimum mapped read length in basepairs."
+    }
     runtime_attributes: {
       name: "Runtime attribute structure"
     }
@@ -261,6 +264,7 @@ task pbmm2_align_wgs {
     String ref_name
 
     Boolean strip_kinetics = true
+    Int     min_length     = 50
 
     RuntimeAttributes runtime_attributes
   }
@@ -284,13 +288,11 @@ task pbmm2_align_wgs {
       --log-level INFO \
       --sort \
       ~{true='--strip' false='' strip_kinetics} \
+      --min-length ~{min_length} \
       --unmapped \
       ~{ref_fasta} \
       ~{bam} \
-      aligned.bam
-
-    mv --verbose aligned.bam ~{sample_id}.~{movie}.~{ref_name}.aligned.bam
-    mv --verbose aligned.bam.bai ~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai
+      ~{sample_id}.~{movie}.~{ref_name}.aligned.bam
   >>>
 
   output {

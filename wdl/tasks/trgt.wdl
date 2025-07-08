@@ -36,6 +36,9 @@ task trgt {
     max_depth: {
       name: "Maximum locus depth"
     }
+    min_read_quality: {
+      name: "Minimum read quality"
+    }
     runtime_attributes: {
       name: "Runtime attribute structure"
     }
@@ -77,6 +80,7 @@ task trgt {
     String out_prefix
 
     Int max_depth = 50
+    Float min_read_quality = 0.98
 
     RuntimeAttributes runtime_attributes
   }
@@ -107,6 +111,7 @@ task trgt {
       --repeats ~{trgt_bed} \
       --reads ~{aligned_bam} \
       --max-depth ~{max_depth} \
+      --min-read-quality=~{min_read_quality} \
       --output-prefix ~{out_prefix}.trgt
 
     bcftools --version
