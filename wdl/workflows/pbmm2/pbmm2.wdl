@@ -303,6 +303,7 @@ task pbmm2_align_wgs {
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
+    time_minutes: "1440"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries

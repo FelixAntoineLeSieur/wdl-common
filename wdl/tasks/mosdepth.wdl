@@ -79,6 +79,18 @@ task mosdepth {
       ~{out_prefix} \
       ~{aligned_bam}
 
+    #My thresholds capture:
+    cat << EOF > thresholdCoverage.py
+    import sys, pandas as pd
+    df=pd.read_csv('~{out_prefix}.thresholds.bed.gz', sep='\t')
+    fiveX=(df["5X"].sum())/3200000000
+    twentyX=(df["20X"].sum())/3200000000
+    fiftyX=(df["50X"].sum())/3200000000
+    out=pd.DataFrame({"5X": [fiveX], "20X":[twentyX],"50X": [fiftyX]})
+    out.to_csv('thresholdsTable.tsv',sep='\t',index=False)
+    EOF
+    python3 ./thresholdCoverage.py
+    
     # normalize output names
     if [ ! -f ~{sample_id}.~{ref_name}.mosdepth.summary.txt ]; then
       mv --verbose ~{out_prefix}.mosdepth.summary.txt ~{sample_id}.~{ref_name}.mosdepth.summary.txt
@@ -151,6 +163,7 @@ task mosdepth {
     docker: "~{runtime_attributes.container_registry}/mosdepth@sha256:63f7a5d1a4a17b71e66d755d3301a951e50f6b63777d34dab3ee9e182fd7acb1"
     cpu: threads
     memory: mem_gb + " GiB"
+    time_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

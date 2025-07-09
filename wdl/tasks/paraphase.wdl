@@ -91,6 +91,7 @@ task paraphase {
     docker: "~{runtime_attributes.container_registry}/paraphase@sha256:e2f904111a43e8f055681112294e0f05ff2839d9801fc01ac39a17c841016920"
     cpu: threads
     memory: mem_gb + " GiB"
+    time_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
