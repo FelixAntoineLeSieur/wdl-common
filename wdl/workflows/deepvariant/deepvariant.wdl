@@ -513,7 +513,7 @@ task deepvariant_postprocess_variants {
 
   Int threads   = 2
   Int mem_gb    = 72
-  Int disk_size = ceil((size(tfrecords_tar, "GB") + size(ref_fasta, "GB") + size(nonvariant_site_tfrecord_tars, "GB")) * 2 + 20)
+  Int disk_size = ceil((size(tfrecords_tar, "GB") + size(example_tfrecord_tars, "GB") + size(nonvariant_site_tfrecord_tars, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
   command <<<
     set -euo pipefail
