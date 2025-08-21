@@ -4,7 +4,7 @@ import "../structs.wdl"
 
 task methbat {
   meta {
-    description: "Profile methylation regions with methbat."
+    description: "Profile methylation regions with MethBat."
   }
 
   parameter_meta {
@@ -43,6 +43,10 @@ task methbat {
 
   command <<<
     set -euo pipefail
+
+    for i in ~{sep=' ' methylation_pileup_beds}; do
+      ln --symbolic $i .
+    done
 
     methbat --version
 
