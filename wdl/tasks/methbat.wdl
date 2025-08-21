@@ -23,6 +23,18 @@ task methbat {
     runtime_attributes: {
       name: "Runtime attribute structure"
     }
+    profile: {
+      name: "Methylation profile output file"
+    }
+    stat_methbat_methylated_count: {
+      name: "Count of methylated regions"
+    }
+    stat_methbat_unmethylated_count: {
+      name: "Count of unmethylated regions"
+    }
+    stat_methbat_asm_count: {
+      name: "Count of allele-specific methylation regions"
+    }
   }
 
   input {
@@ -54,10 +66,21 @@ task methbat {
       --input-prefix ~{sample_prefix} \
       --input-regions ~{region_tsv} \
       --output-region-profile ~{out_prefix}.methbat.profile.tsv
+
+    # count for three most interesting methylation summary_labels
+    awk '$4=="Methylated" {print}' ~{out_prefix}.methbat.profile.tsv \
+    | wc -l > methylated_count.txt
+    awk '$4=="Unmethylated" {print}' ~{out_prefix}.methbat.profile.tsv \
+    | wc -l > unmethylated_count.txt
+    awk '$4=="AlleleSpecificMethylation" {print}' ~{out_prefix}.methbat.profile.tsv \
+    | wc -l > asm_count.txt
   >>>
 
   output {
-    File profile = "~{out_prefix}.methbat.profile.tsv"
+    File   profile                         = "~{out_prefix}.methbat.profile.tsv"
+    String stat_methbat_methylated_count   = read_string("methylated_count.txt")
+    String stat_methbat_unmethylated_count = read_string("unmethylated_count.txt")
+    String stat_methbat_asm_count          = read_string("asm_count.txt")
   }
 
   runtime {
