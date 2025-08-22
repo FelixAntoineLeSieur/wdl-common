@@ -88,7 +88,8 @@ task mosdepth {
 
     # plot depth distribution
     cat << EOF > plot_depth_distribution.py
-    import pandas as pd, seaborn as sns, matplotlib.pyplot as plt, numpy as np
+    import pandas as pd, seaborn as sns, matplotlib, matplotlib.pyplot as plt, numpy as np
+    matplotlib.use('Agg')
     sns.set_theme(style='darkgrid')
     df = pd.read_csv(
       '~{sample_id}.~{ref_name}.regions.bed.gz',
@@ -109,7 +110,7 @@ task mosdepth {
     axs[1].set_ylabel('Proportion ≥ depth')
     plt.suptitle('~{sample_id}.~{ref_name}\nAligned depth distribution')
     fig.tight_layout()
-    plt.savefig('~{sample_id}.~{ref_name}.depth_distribution.png')
+    plt.savefig('~{sample_id}.~{ref_name}.depth_distribution.png'); plt.close();
     EOF
 
     python3 ./plot_depth_distribution.py
