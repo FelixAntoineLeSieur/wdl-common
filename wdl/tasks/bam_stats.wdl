@@ -59,6 +59,9 @@ task bam_stats {
     stat_mapped_percent: {
       name: "Mapped read percent"
     }
+    stat_mean_gap_compressed_identity: {
+      name: "Mean gap-compressed identity"
+    }
   }
 
   input {
@@ -129,6 +132,7 @@ task bam_stats {
       },
     )
     prim = df['alignment_type'] == 'prim'      # primary alignments
+    aligned = df['alignment_type'].isin(['prim', 'supp'])  # all aligned reads
     non_supp = df['alignment_type'] != 'supp'  # unique reads (primary and unmapped)
     has_quality = df['read_quality'].notna()   # reads with quality scores
     # print summary stats to stdout
@@ -140,6 +144,7 @@ task bam_stats {
       str(df[non_supp].read_length.median().round(2)),
       str(df[non_supp].read_quality.mean().round(2) if any(has_quality) else pd.NA),
       str(df[non_supp].read_quality.median().round(2) if any(has_quality) else pd.NA),
+      str(df[aligned].mg.mean().round(2))
     ]))
     sns.set_theme(style='darkgrid')
     count_formatter = plt.FuncFormatter(lambda x, _: f'{int(x/1000)}k' if x >= 1000 else f'{int(x)}')
@@ -190,21 +195,23 @@ task bam_stats {
     cut -f5 stats.txt > read_length_median.txt
     cut -f6 stats.txt > read_quality_mean.txt
     cut -f7 stats.txt > read_quality_median.txt
+    cut -f8 stats.txt > mean_gap_compressed_identity.txt
   >>>
 
   output {
-    File   bam_statistics           = "~{sample_id}.~{ref_name}.bam_statistics.tsv.gz"
-    File   read_length_plot         = "~{sample_id}.read_length_histogram.png"
-    File?  read_quality_plot        = "~{sample_id}.read_quality_histogram.png"
-    File   mapq_distribution_plot   = "~{sample_id}.~{ref_name}.mapq_distribution.png"
-    File   mg_distribution_plot     = "~{sample_id}.~{ref_name}.mg_distribution.png"
-    String stat_num_reads           = read_string("num_reads.txt")
-    String stat_read_length_mean    = read_string("read_length_mean.txt")
-    String stat_read_length_median  = read_string("read_length_median.txt")
-    String stat_read_quality_mean   = read_string("read_quality_mean.txt")
-    String stat_read_quality_median = read_string("read_quality_median.txt")
-    String stat_mapped_read_count   = read_string("mapped_read_count.txt")
-    String stat_mapped_percent      = read_string("mapped_percent.txt")
+    File   bam_statistics                    = "~{sample_id}.~{ref_name}.bam_statistics.tsv.gz"
+    File   read_length_plot                  = "~{sample_id}.read_length_histogram.png"
+    File?  read_quality_plot                 = "~{sample_id}.read_quality_histogram.png"
+    File   mapq_distribution_plot            = "~{sample_id}.~{ref_name}.mapq_distribution.png"
+    File   mg_distribution_plot              = "~{sample_id}.~{ref_name}.mg_distribution.png"
+    String stat_num_reads                    = read_string("num_reads.txt")
+    String stat_read_length_mean             = read_string("read_length_mean.txt")
+    String stat_read_length_median           = read_string("read_length_median.txt")
+    String stat_read_quality_mean            = read_string("read_quality_mean.txt")
+    String stat_read_quality_median          = read_string("read_quality_median.txt")
+    String stat_mapped_read_count            = read_string("mapped_read_count.txt")
+    String stat_mapped_percent               = read_string("mapped_percent.txt")
+    String stat_mean_gap_compressed_identity = read_string("mean_gap_compressed_identity.txt")
   }
 
   runtime {
