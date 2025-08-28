@@ -47,6 +47,9 @@ task bam_stats {
     stat_read_length_median: {
       name: "Median Read Length"
     }
+    stat_read_length_n50: {
+      name: "Read Length N50"
+    }
     stat_read_quality_mean: {
       name: "Mean Quality"
     }
@@ -135,6 +138,10 @@ task bam_stats {
     aligned = df['alignment_type'].isin(['prim', 'supp'])  # all aligned reads
     non_supp = df['alignment_type'] != 'supp'  # unique reads (primary and unmapped)
     has_quality = df['read_quality'].notna()   # reads with quality scores
+    # calculate length n50
+    read_lengths = df[non_supp].read_length.sort_values(ascending=False).reset_index(drop=True)
+    cumsum = read_lengths.cumsum()
+    read_length_n50 = read_lengths[cumsum >= cumsum.iloc[-1] / 2].iloc[0]
     # print summary stats to stdout
     print('\t'.join([
       str(len(df[non_supp])),
@@ -142,6 +149,7 @@ task bam_stats {
       str(round(len(df[prim]) / len(df[non_supp]) * 100, 2)),
       str(df[non_supp].read_length.mean().round(2)),
       str(df[non_supp].read_length.median().round(2)),
+      str(read_length_n50),
       str(df[non_supp].read_quality.mean().round(2) if any(has_quality) else pd.NA),
       str(df[non_supp].read_quality.median().round(2) if any(has_quality) else pd.NA),
       str(df[aligned].mg.mean().round(2))
@@ -193,9 +201,10 @@ task bam_stats {
     cut -f3 stats.txt > mapped_percent.txt
     cut -f4 stats.txt > read_length_mean.txt
     cut -f5 stats.txt > read_length_median.txt
-    cut -f6 stats.txt > read_quality_mean.txt
-    cut -f7 stats.txt > read_quality_median.txt
-    cut -f8 stats.txt > mean_gap_compressed_identity.txt
+    cut -f6 stats.txt > read_length_n50.txt
+    cut -f7 stats.txt > read_quality_mean.txt
+    cut -f8 stats.txt > read_quality_median.txt
+    cut -f9 stats.txt > mean_gap_compressed_identity.txt
   >>>
 
   output {
@@ -207,6 +216,7 @@ task bam_stats {
     String stat_num_reads                    = read_string("num_reads.txt")
     String stat_read_length_mean             = read_string("read_length_mean.txt")
     String stat_read_length_median           = read_string("read_length_median.txt")
+    String stat_read_length_n50              = read_string("read_length_n50.txt")
     String stat_read_quality_mean            = read_string("read_quality_mean.txt")
     String stat_read_quality_median          = read_string("read_quality_median.txt")
     String stat_mapped_read_count            = read_string("mapped_read_count.txt")
