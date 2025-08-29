@@ -117,13 +117,15 @@ task bam_stats {
     EOF
 
     cat << EOF > plot_stats.py
-    import pandas as pd, seaborn as sns, matplotlib.pyplot as plt
+    import pandas as pd, seaborn as sns, matplotlib, matplotlib.pyplot as plt
+    matplotlib.use('Agg')
     df = pd.read_csv(
       "~{sample_id}.~{ref_name}.bam_statistics.tsv.gz", sep='\t', header=None, compression='gzip',
       names=['movie', 'read_name', 'read_length', 'read_quality', 'alignment_type', 'mapq', 'mg'],
+      usecols=['movie', 'read_length', 'read_quality', 'alignment_type', 'mapq', 'mg'],
       dtype={
-        'movie': str, 'read_name': str, 'read_length': pd.Int32Dtype(), 'read_quality': pd.Int16Dtype(),
-        'alignment_type': str, 'mapq': pd.Int8Dtype(), 'mg': pd.Float32Dtype(),
+        'movie': 'category', 'read_length': pd.Int32Dtype(), 'read_quality': pd.Int16Dtype(),
+        'alignment_type': 'category', 'mapq': pd.Int8Dtype(), 'mg': pd.Float32Dtype(),
       },
     )
     prim = df['alignment_type'] == 'prim'      # primary alignments

@@ -126,7 +126,7 @@ task sawfish_discover {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:dc7a955175967b4a5c4be9c438243332bc22f41e8240bb3b5c84699741248a44"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:842fcae0ebaf2ab060f1d24512dccd45f9c30d49a609794dfdc4693b4e88dec2"
     cpu: threads
     memory: mem_gb + " GiB"
     time_minutes: "90"
@@ -293,7 +293,7 @@ task sawfish_call {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:dc7a955175967b4a5c4be9c438243332bc22f41e8240bb3b5c84699741248a44"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:842fcae0ebaf2ab060f1d24512dccd45f9c30d49a609794dfdc4693b4e88dec2"
     cpu: threads
     memory: mem_gb + " GiB"
     time_minutes: "90"

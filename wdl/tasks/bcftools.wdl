@@ -94,7 +94,8 @@ task bcftools_stats_roh_small_variants {
 
     # plot SNVs by REF and ALT
     cat << EOF > plot_snvs.py
-    import sys, pandas as pd, seaborn as sns, matplotlib.pyplot as plt, numpy as np
+    import sys, pandas as pd, seaborn as sns, matplotlib, matplotlib.pyplot as plt, numpy as np
+    matplotlib.use('Agg')
     BASES = ['A', 'C', 'G', 'T']
     df = pd.concat(
       [
@@ -114,7 +115,7 @@ task bcftools_stats_roh_small_variants {
     plt.yticks(fontsize='large', rotation=0)
     plt.title('~{sample_id}.~{ref_name}\nDeepVariant SNV distribution', fontsize='large')
     fig.tight_layout()
-    plt.savefig('~{sample_id}.~{ref_name}.small_variants.snv_distribution.png')
+    plt.savefig('~{sample_id}.~{ref_name}.small_variants.snv_distribution.png'); plt.close();
     EOF
 
     # normalize VCF, filtering for PASS SNVs >= GQ20, group by REF and ALT, and plot
@@ -136,7 +137,8 @@ task bcftools_stats_roh_small_variants {
 
     # plot indels by size
     cat << EOF > plot_indels.py
-    import sys, pandas as pd, seaborn as sns, matplotlib.pyplot as plt
+    import sys, pandas as pd, seaborn as sns, matplotlib, matplotlib.pyplot as plt
+    matplotlib.use('Agg')
     from numpy import abs
     df = pd.read_csv(sys.stdin, sep='\t')
     def size_filter(df, col, min, max):
@@ -158,7 +160,7 @@ task bcftools_stats_roh_small_variants {
     plot_hist(axs[1], df, 1, 50, logy=True)
     plt.suptitle('~{sample_id}.~{ref_name}\nDeepVariant indel distribution, ±[1,50) bp')
     fig.tight_layout()
-    plt.savefig('~{sample_id}.~{ref_name}.small_variants.indel_distribution.png')
+    plt.savefig('~{sample_id}.~{ref_name}.small_variants.indel_distribution.png'); plt.close();
     EOF
 
     # normalize VCF, filter for PASS indels >= GQ20, group by length, and plot
