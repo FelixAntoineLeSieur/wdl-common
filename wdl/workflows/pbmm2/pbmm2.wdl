@@ -241,6 +241,9 @@ task pbmm2_align_wgs {
     strip_kinetics: {
       name: "Strip kinetics tags"
     }
+    keep_unmapped: {
+      name: "Keep unmapped reads"
+    }
     min_length: {
       name: " Minimum mapped read length in basepairs."
     }
@@ -264,6 +267,7 @@ task pbmm2_align_wgs {
     String ref_name
 
     Boolean strip_kinetics = true
+    Boolean keep_unmapped  = true
     Int     min_length     = 50
 
     RuntimeAttributes runtime_attributes
@@ -288,8 +292,8 @@ task pbmm2_align_wgs {
       --log-level INFO \
       --sort \
       ~{true='--strip' false='' strip_kinetics} \
+      ~{true='--unmapped' false='' keep_unmapped} \
       --min-length ~{min_length} \
-      --unmapped \
       ~{ref_fasta} \
       ~{bam} \
       ~{sample_id}.~{movie}.~{ref_name}.aligned.bam
