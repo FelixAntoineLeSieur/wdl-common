@@ -38,7 +38,7 @@ task mosdepth {
     depth_distribution_plot: {
       name: "Depth distribution plot"
     }
-    stat_mean_depth: {
+    stat_depth_mean: {
       name: "Mean depth"
     }
     inferred_sex: {
@@ -144,7 +144,7 @@ task mosdepth {
     File   region_bed              = "~{sample_id}.~{ref_name}.regions.bed.gz"
     File   region_bed_index        = "~{sample_id}.~{ref_name}.regions.bed.gz.csi"
     File   depth_distribution_plot = "~{sample_id}.~{ref_name}.depth_distribution.png"
-    String stat_mean_depth         = read_string("mean_depth.txt")
+    String stat_depth_mean         = read_string("mean_depth.txt")
     String inferred_sex            = if (infer_sex) then read_string("inferred_sex.txt") else ""
   }
 

@@ -38,7 +38,7 @@ task bam_stats {
     mg_distribution_plot: {
       name: "Gap-compressed identity distribution plot"
     }
-    stat_num_reads: {
+    stat_read_count: {
       name: "Number of Reads"
     }
     stat_read_length_mean: {
@@ -59,10 +59,10 @@ task bam_stats {
     stat_mapped_read_count: {
       name: "Mapped read count"
     }
-    stat_mapped_percent: {
+    stat_mapped_read_percent: {
       name: "Mapped read percent"
     }
-    stat_mean_gap_compressed_identity: {
+    stat_gap_compressed_identity_mean: {
       name: "Mean gap-compressed identity"
     }
   }
@@ -152,7 +152,8 @@ task bam_stats {
       str(read_length_n50),
       str(df[non_supp].read_quality.mean().round(2) if any(has_quality) else pd.NA),
       str(df[non_supp].read_quality.median().round(2) if any(has_quality) else pd.NA),
-      str(df[aligned].mg.mean().round(2))
+      str(df[aligned].mg.mean().round(2)),
+      str(df[aligned].mg.median().round(2))
     ]))
     sns.set_theme(style='darkgrid')
     count_formatter = plt.FuncFormatter(lambda x, _: f'{int(x/1000)}k' if x >= 1000 else f'{int(x)}')
@@ -196,32 +197,34 @@ task bam_stats {
 
     python3 ./plot_stats.py > stats.txt
 
-    cut -f1 stats.txt > num_reads.txt
+    cut -f1 stats.txt > read_count.txt
     cut -f2 stats.txt > mapped_read_count.txt
-    cut -f3 stats.txt > mapped_percent.txt
+    cut -f3 stats.txt > mapped_read_percent.txt
     cut -f4 stats.txt > read_length_mean.txt
     cut -f5 stats.txt > read_length_median.txt
     cut -f6 stats.txt > read_length_n50.txt
     cut -f7 stats.txt > read_quality_mean.txt
     cut -f8 stats.txt > read_quality_median.txt
-    cut -f9 stats.txt > mean_gap_compressed_identity.txt
+    cut -f9 stats.txt > mg_mean.txt
+    cut -f10 stats.txt > mg_median.txt
   >>>
 
   output {
-    File   bam_statistics                    = "~{sample_id}.~{ref_name}.bam_statistics.tsv.gz"
-    File   read_length_plot                  = "~{sample_id}.read_length_histogram.png"
-    File?  read_quality_plot                 = "~{sample_id}.read_quality_histogram.png"
-    File   mapq_distribution_plot            = "~{sample_id}.~{ref_name}.mapq_distribution.png"
-    File   mg_distribution_plot              = "~{sample_id}.~{ref_name}.mg_distribution.png"
-    String stat_num_reads                    = read_string("num_reads.txt")
-    String stat_read_length_mean             = read_string("read_length_mean.txt")
-    String stat_read_length_median           = read_string("read_length_median.txt")
-    String stat_read_length_n50              = read_string("read_length_n50.txt")
-    String stat_read_quality_mean            = read_string("read_quality_mean.txt")
-    String stat_read_quality_median          = read_string("read_quality_median.txt")
-    String stat_mapped_read_count            = read_string("mapped_read_count.txt")
-    String stat_mapped_percent               = read_string("mapped_percent.txt")
-    String stat_mean_gap_compressed_identity = read_string("mean_gap_compressed_identity.txt")
+    File   bam_statistics                      = "~{sample_id}.~{ref_name}.bam_statistics.tsv.gz"
+    File   read_length_plot                    = "~{sample_id}.read_length_histogram.png"
+    File?  read_quality_plot                   = "~{sample_id}.read_quality_histogram.png"
+    File   mapq_distribution_plot              = "~{sample_id}.~{ref_name}.mapq_distribution.png"
+    File   mg_distribution_plot                = "~{sample_id}.~{ref_name}.mg_distribution.png"
+    String stat_read_count                     = read_string("read_count.txt")
+    String stat_read_length_mean               = read_string("read_length_mean.txt")
+    String stat_read_length_median             = read_string("read_length_median.txt")
+    String stat_read_length_n50                = read_string("read_length_n50.txt")
+    String stat_read_quality_mean              = read_string("read_quality_mean.txt")
+    String stat_read_quality_median            = read_string("read_quality_median.txt")
+    String stat_mapped_read_count              = read_string("mapped_read_count.txt")
+    String stat_mapped_read_percent                 = read_string("mapped_read_percent.txt")
+    String stat_gap_compressed_identity_mean   = read_string("mg_mean.txt")
+    String stat_gap_compressed_identity_median = read_string("mg_median.txt")
   }
 
   runtime {
