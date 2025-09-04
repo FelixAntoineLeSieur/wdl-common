@@ -84,7 +84,7 @@ task consolidate_stats {
   input {
     String id
 
-    Map[String, Array[String]] stats
+    Array[Array[String]] stats
     Array[String] msg_array
 
     RuntimeAttributes runtime_attributes
@@ -111,8 +111,7 @@ task consolidate_stats {
     EOF
 
     # shellcheck disable=SC2296
-    jq -cr 'to_entries[] | [.key, (.value | flatten[])] | @tsv' < ~{write_json(stats)} \
-    | python3 ./transpose.py \
+    python3 ./transpose.py < ~{write_tsv(stats)} \
     > ~{id}.stats.txt
 
     sed '/^[[:space:]]*$/d' ~{write_lines(msg_array)} > ~{id}.messages.txt
