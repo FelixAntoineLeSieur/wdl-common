@@ -68,11 +68,11 @@ task methbat {
       --output-region-profile ~{out_prefix}.methbat.profile.tsv
 
     # count for three most interesting methylation summary_labels
-    awk '$4=="Methylated" {print}' ~{out_prefix}.methbat.profile.tsv \
+    awk '$5=="Methylated" {print}' ~{out_prefix}.methbat.profile.tsv \
     | wc -l > methylated_count.txt
-    awk '$4=="Unmethylated" {print}' ~{out_prefix}.methbat.profile.tsv \
+    awk '$5=="Unmethylated" {print}' ~{out_prefix}.methbat.profile.tsv \
     | wc -l > unmethylated_count.txt
-    awk '$4=="AlleleSpecificMethylation" {print}' ~{out_prefix}.methbat.profile.tsv \
+    awk '$5=="AlleleSpecificMethylation" {print}' ~{out_prefix}.methbat.profile.tsv \
     | wc -l > asm_count.txt
   >>>
 
@@ -84,7 +84,7 @@ task methbat {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/methbat@sha256:7cf8f17ced418a3b8e1bec7522acc2d84cc73fb29776c5aaf2a02784ede7c52b"
+    docker: "~{runtime_attributes.container_registry}/methbat@sha256:54a74389cf8ac485e8f34522d48e05880c01245e9aaf4dec6a6eddf25ee2c550"
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
