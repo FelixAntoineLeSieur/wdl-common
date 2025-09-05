@@ -185,13 +185,13 @@ task sawfish_call {
       name: "Copy number bedgraph"
     }
     depth_bw: {
-      name: "Depth bedgraph"
+      name: "Depth bigWig"
     }
     gc_bias_corrected_depth_bw: {
-      name: "GC bias corrected depth bedgraph"
+      name: "GC bias corrected depth bigWig"
     }
     maf_bw: {
-      name: "MAF bedgraph"
+      name: "MAF bigWig"
     }
     copynum_summary: {
       name: "Copy number summary JSON"
