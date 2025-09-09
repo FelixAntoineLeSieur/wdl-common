@@ -70,11 +70,12 @@ task mitorsaw {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/mitorsaw@sha256:d0e47fb84e6e962f01a754d1052a24e550694646c0d4afb056c0e3fd7ace7a0d"
+    docker: "~{runtime_attributes.container_registry}/mitorsaw@sha256:1509dbd7b0a815c7ceb3af52fddc93ef3544ae1858483139450fa0285f8dbe0c"
     cpu: threads
     memory: mem_gb + " GiB"
-    disk: disk_size + " GB"
-    disks: "local-disk " + disk_size + " HDD"
+    time_minutes: "300"
+    #disk: disk_size + " GB"
+    #disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey

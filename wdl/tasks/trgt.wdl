@@ -86,7 +86,7 @@ task trgt {
   }
 
   Int threads   = 32
-  Int mem_gb    = 64
+  Int mem_gb    = 128
   Int disk_size = ceil((size(aligned_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
   Int samtools_sort_threads = 8
@@ -162,8 +162,8 @@ task trgt {
   runtime {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:7511072d0f57396b1b99c7e0c08934db417138b6b4ce5d93c4974115faab2a0d"
     cpu: threads
-    memory: mem_gb + " GB"
-    time_minutes: "60"
+    memory: mem_gb + " GiB"
+    time_minutes: "90"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -296,7 +296,7 @@ task coverage_dropouts {
   }
 
   Int threads   = 2
-  Int mem_gb    = 4
+  Int mem_gb    = 8
   Int disk_size = ceil((size(aligned_bam, "GB")) + 20)
 
   command <<<
@@ -316,7 +316,7 @@ task coverage_dropouts {
   runtime {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:7511072d0f57396b1b99c7e0c08934db417138b6b4ce5d93c4974115faab2a0d"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     time_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"

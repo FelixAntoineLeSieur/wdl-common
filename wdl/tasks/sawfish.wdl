@@ -126,9 +126,10 @@ task sawfish_discover {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:aa764cb24fe9e96af7f3d7ec625fd6b52f02e9f295a3e82ef586d6a5e5351f34"
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:dc7a955175967b4a5c4be9c438243332bc22f41e8240bb3b5c84699741248a44"
     cpu: threads
     memory: mem_gb + " GiB"
+    time_minutes: "120"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -301,6 +302,7 @@ task sawfish_call {
     docker: "~{runtime_attributes.container_registry}/sawfish@sha256:aa764cb24fe9e96af7f3d7ec625fd6b52f02e9f295a3e82ef586d6a5e5351f34"
     cpu: threads
     memory: mem_gb + " GiB"
+    time_minutes: "90"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
