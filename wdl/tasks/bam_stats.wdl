@@ -65,6 +65,9 @@ task bam_stats {
     stat_gap_compressed_identity_mean: {
       name: "Mean gap-compressed identity"
     }
+    stat_gap_compressed_identity_median: {
+      name: "Mean gap-compressed identity"
+    }
   }
 
   input {
@@ -222,7 +225,7 @@ task bam_stats {
     String stat_read_quality_mean              = read_string("read_quality_mean.txt")
     String stat_read_quality_median            = read_string("read_quality_median.txt")
     String stat_mapped_read_count              = read_string("mapped_read_count.txt")
-    String stat_mapped_read_percent                 = read_string("mapped_read_percent.txt")
+    String stat_mapped_read_percent            = read_string("mapped_read_percent.txt")
     String stat_gap_compressed_identity_mean   = read_string("mg_mean.txt")
     String stat_gap_compressed_identity_median = read_string("mg_median.txt")
   }
