@@ -134,8 +134,8 @@ task cpg_pileup {
   runtime {
     docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:d6e63fe3f6855cfe60f573de1ca85fab27f4a68e24a7f5691a7a805a22af292d"
     cpu: threads
-    memory: mem_gb + " GB"
-    time_minutes: "60"
+    memory: mem_gb + " GiB"
+    time_minutes: "120"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
