@@ -70,9 +70,10 @@ task mitorsaw {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/mitorsaw@sha256:4a1eac52a6ae80b7ccfb0ad3809f5f34a69c7ed859541e097e36d73623e8ad0e"
+    #docker: "~{runtime_attributes.container_registry}/mitorsaw@sha256:4a1eac52a6ae80b7ccfb0ad3809f5f34a69c7ed859541e097e36d73623e8ad0e"
+    sif: "mitorsaw@sha256:4a1eac52a6ae80b7ccfb0ad3809f5f34a69c7ed859541e097e36d73623e8ad0e.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb *1024
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

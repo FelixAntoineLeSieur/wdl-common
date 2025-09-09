@@ -134,9 +134,10 @@ task glnexus {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/glnexus@sha256:ce6fecf59dddc6089a8100b31c29c1e6ed50a0cf123da9f2bc589ee4b0c69c8e"
+    #docker: "~{runtime_attributes.container_registry}/glnexus@sha256:ce6fecf59dddc6089a8100b31c29c1e6ed50a0cf123da9f2bc589ee4b0c69c8e"
+    sif: "glnexus@sha256:ce6fecf59dddc6089a8100b31c29c1e6ed50a0cf123da9f2bc589ee4b0c69c8e.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb *1024
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

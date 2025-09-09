@@ -261,10 +261,11 @@ task deepvariant_make_examples {
   }
 
   runtime {
-    docker: docker_image
+    #docker: docker_image
+    sif:"deepvariant@1.9.0.sif"
     cpu: tasks_per_shard
-    memory: mem_gb + " GiB"
-    time_minutes: "360"
+    memory: mem_gb *1024
+    runtime_minutes: "360"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -345,10 +346,11 @@ task deepvariant_call_variants_cpu {
   }
 
   runtime {
-    docker: docker_image
+    #docker: docker_image
+    sif:"deepvariant@1.9.0.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
-    time_minutes: "480"
+    memory: mem_gb *1024
+    runtime_minutes: "480"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -429,9 +431,10 @@ task deepvariant_call_variants_gpu {
   }
 
   runtime {
-    docker: docker_image
+    #docker: docker_image
+    sif:"deepvariant@1.9.0.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb *1024
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     bootDiskSizeGb: 30  # !UnknownRuntimeKey
@@ -567,10 +570,11 @@ task deepvariant_postprocess_variants {
   }
 
   runtime {
-    docker: docker_image
+    #docker: docker_image
+    sif:"deepvariant@1.9.0.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
-    time_minutes: "240"
+    memory: mem_gb *1024
+    runtime_minutes: "240"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

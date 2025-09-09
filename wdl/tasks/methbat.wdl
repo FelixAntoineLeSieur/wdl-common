@@ -84,9 +84,10 @@ task methbat {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/methbat@sha256:7cf8f17ced418a3b8e1bec7522acc2d84cc73fb29776c5aaf2a02784ede7c52b"
+    #docker: "~{runtime_attributes.container_registry}/methbat@sha256:7cf8f17ced418a3b8e1bec7522acc2d84cc73fb29776c5aaf2a02784ede7c52b"
+    sif: "methbat@sha256:7cf8f17ced418a3b8e1bec7522acc2d84cc73fb29776c5aaf2a02784ede7c52b.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb *1024
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

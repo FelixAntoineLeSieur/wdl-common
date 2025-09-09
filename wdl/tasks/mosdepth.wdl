@@ -76,6 +76,7 @@ task mosdepth {
       --by 500 \
       --no-per-base \
       --use-median \
+      --thresholds 5,20,50 \
       ~{out_prefix} \
       ~{aligned_bam}
 
@@ -161,10 +162,11 @@ task mosdepth {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/mosdepth@sha256:63f7a5d1a4a17b71e66d755d3301a951e50f6b63777d34dab3ee9e182fd7acb1"
+    #docker: "~{runtime_attributes.container_registry}/mosdepth@sha256:63f7a5d1a4a17b71e66d755d3301a951e50f6b63777d34dab3ee9e182fd7acb1"
+    sif: "mosdepth@sha256:63f7a5d1a4a17b71e66d755d3301a951e50f6b63777d34dab3ee9e182fd7acb1.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
-    time_minutes: "60"
+    memory: mem_gb * 1024
+    runtime_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries

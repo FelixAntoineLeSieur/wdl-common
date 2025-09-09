@@ -42,9 +42,10 @@ task split_string {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
+    #docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
+    sif: "pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb *1024
     disk: "~{disk} GB"
     disks: "local-disk ~{disk} HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -124,10 +125,11 @@ task consolidate_stats {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
+    #docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
+    sif: "pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
-    time_minutes: "10"
+    memory: mem_gb *1024
+    runtime_minutes: "10"
     disk: "~{disk} GB"
     disks: "local-disk ~{disk} HDD"
     preemptible: runtime_attributes.preemptible_tries

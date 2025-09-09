@@ -112,7 +112,7 @@ task split_input_bam {
   String movie = basename(bam, ".bam")
 
   Int threads   = 16
-  Int mem_gb    = 32
+  Int mem_gb    = ceil(threads * 4) #32
   Int disk_size = ceil(size(bam, "GB") * 3 + 20)
 
   command <<<
@@ -190,7 +190,7 @@ task split_input_bam {
         parallel --version
         # shellcheck disable=SC2012
         ls chunk_* | parallel -v -j ~{threads} \
-          zmwfilter --num-threads 1 --include {} $INBAM ~{movie}.{}.bam
+          zmwfilter --num-threads 2 --include {} $INBAM ~{movie}.{}.bam
 
         # if the input BAM was reset, remove so that it is not included in the output
         rm --force --verbose ~{movie}.reset.bam
@@ -204,10 +204,11 @@ task split_input_bam {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbtk@sha256:67cd438ed9f343f90f058108170ddbff8fb1d9b5c193f4016be42b737ee2e73c"
+    #docker: "~{runtime_attributes.container_registry}/pbtk@sha256:67cd438ed9f343f90f058108170ddbff8fb1d9b5c193f4016be42b737ee2e73c"
+    sif: "pbtk@sha256:67cd438ed9f343f90f058108170ddbff8fb1d9b5c193f4016be42b737ee2e73c.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
-    time_minutes: "90"
+    memory: mem_gb * 1024 #32Gb
+    runtime_minutes: "60"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -279,7 +280,7 @@ task pbmm2_align_wgs {
 
     pbmm2 align \
       --num-threads ~{threads} \
-      --sort-memory 4G \
+      --sort-memory 6G \
       --preset HIFI \
       --sample ~{sample_id} \
       --log-level INFO \
@@ -300,11 +301,12 @@ task pbmm2_align_wgs {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:5f3f4d1f5dbea5cd4c388ee26b2fecbbb7dbcef449343633e039dca3d3725859"
+    #docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:5f3f4d1f5dbea5cd4c388ee26b2fecbbb7dbcef449343633e039dca3d3725859"
+    sif: "pbmm2@sha256:5f3f4d1f5dbea5cd4c388ee26b2fecbbb7dbcef449343633e039dca3d3725859.sif"
     cpu: threads
-    memory: mem_gb + " GiB"
+    memory: mem_gb *1024 #128Gb
     disk: disk_size + " GB"
-    time_minutes: "1440"
+    runtime_minutes: "360"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
