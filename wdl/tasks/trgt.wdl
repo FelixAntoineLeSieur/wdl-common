@@ -295,16 +295,17 @@ task coverage_dropouts {
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads   = 2
-  Int mem_gb    = 8
+  Int threads   = 4
+  Int mem_gb    = 16
   Int disk_size = ceil((size(aligned_bam, "GB")) + 20)
 
   command <<<
     set -eu
 
     # Get coverage dropouts
+      # <(zcat ~{trgt_bed} || cat ~{trgt_bed}) \
     check_trgt_coverage.py \
-      <(zcat ~{trgt_bed} || cat ~{trgt_bed}) \
+      ~{trgt_bed} \
       ~{aligned_bam} \
     > ~{out_prefix}.trgt.dropouts.txt
   >>>
@@ -317,7 +318,7 @@ task coverage_dropouts {
     docker: "~{runtime_attributes.container_registry}/trgt@sha256:7511072d0f57396b1b99c7e0c08934db417138b6b4ce5d93c4974115faab2a0d"
     cpu: threads
     memory: mem_gb + " GiB"
-    time_minutes: "60"
+    time_minutes: "180"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
