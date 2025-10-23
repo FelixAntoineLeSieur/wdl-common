@@ -59,9 +59,9 @@ task bcftools_stats_roh_small_variants {
 
     RuntimeAttributes runtime_attributes
   }
-
-  Int threads   = 2
-  Int mem_gb    = 4
+  #Initially 2threads 4Gb, 44-23% efficiency
+  Int threads   = 1
+  Int mem_gb    = 2
   Int disk_size = ceil(size(vcf, "GB") + size(ref_fasta, "GB") + 20)
 
   command <<<
@@ -522,9 +522,9 @@ task sv_stats {
 
     RuntimeAttributes runtime_attributes
   }
-
-  Int threads   = 2
-  Int mem_gb    = 4
+  #Initially 2threads 4Gb, 3% efficiency
+  Int threads   = 1
+  Int mem_gb    = 1
   Int disk_size = ceil(size(vcf, "GB") + 20)
 
   command <<<

@@ -237,9 +237,10 @@ task sawfish_call {
 
     RuntimeAttributes runtime_attributes
   }
-
-  Int threads   = 16
-  Int mem_gb    = threads * 2
+  #Initially 16 cores 8-33% efficiency
+  Int threads   = 8
+  #Initially threads * 2 (32) with 17-69% efficiency
+  Int mem_gb    = 32
   Int disk_size = ceil(size(aligned_bams, "GB") + size(ref_fasta, "GB") + (size(discover_tars, "GB")) * 2 + 20)
 
   command <<<

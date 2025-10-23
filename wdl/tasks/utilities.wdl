@@ -34,17 +34,18 @@ task split_string {
   Int disk    = 1
 
   command <<<
-    echo '~{sub(concatenated_string, delimiter, "\n")}'
+    echo '~{sub(concatenated_string, delimiter, "\n")}' >"line.txt"
   >>>
 
   output {
-    Array[String] array = read_lines(stdout())
+    Array[String] array = read_lines("line.txt")
   }
 
   runtime {
     docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
     cpu: threads
     memory: mem_gb + " GiB"
+    time_minutes: "1"
     disk: "~{disk} GB"
     disks: "local-disk ~{disk} HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -126,7 +127,7 @@ task consolidate_stats {
     docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"
     cpu: threads
     memory: "~{mem_gb} GB"
-    time_minutes: "30"
+    time_minutes: "3"
     disk: "~{disk} GB"
     disks: "local-disk ~{disk} HDD"
     preemptible: runtime_attributes.preemptible_tries
