@@ -317,7 +317,9 @@ task deepvariant_call_variants_cpu {
 
   Int threads        = total_deepvariant_tasks
   Int writer_threads = 8
-  Int mem_gb         = total_deepvariant_tasks * 4
+  #Initially total_deepvariant_tasks * 4 (256G) around 10%
+  #128Gb was tried with 21.51% efficiency
+  Int mem_gb         = 48
   Int disk_size      = ceil(size(example_tfrecord_tars, "GB") * 2 + 100)
 
   command <<<
@@ -348,7 +350,7 @@ task deepvariant_call_variants_cpu {
     docker: docker_image
     cpu: threads
     memory: mem_gb + " GB"
-    time_minutes: "480"
+    time_minutes: "45"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -514,7 +516,8 @@ task deepvariant_postprocess_variants {
   }
 
   Int threads   = 4
-  Int mem_gb    = 88
+  #Initially 88Gb, 49% efficiency
+  Int mem_gb    = 64
   Int disk_size = ceil((size(tfrecords_tar, "GB") + size(ref_fasta, "GB") + size(nonvariant_site_tfrecord_tars, "GB")) * 2 + 20)
 
   command <<<

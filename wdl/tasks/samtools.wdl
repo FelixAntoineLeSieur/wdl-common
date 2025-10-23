@@ -34,7 +34,8 @@ task samtools_merge {
   }
 
   Int threads   = 8
-  Int mem_gb    = 16
+    #Initially 4Gb, 8% efficiency
+  Int mem_gb    = 8
   Int disk_size = ceil(size(bams, "GB") * 2 + 20)
 
   command <<<
@@ -172,7 +173,8 @@ task subset_reference {
   }
 
   Int threads   = 4
-  Int mem_gb    = 4
+  #Initially 4Gb, 8% efficiency
+  Int mem_gb    = 1
   Int disk_size = ceil(size(ref_fasta, "GB") * 2 + 20)
 
   command <<<
@@ -263,7 +265,8 @@ task subset_bam {
   }
 
   Int threads   = 4
-  Int mem_gb    = 4
+  #Initially 4Gb, 8% efficiency
+  Int mem_gb    = 1
   Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
 
   command <<<
