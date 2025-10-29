@@ -65,7 +65,8 @@ task pbstarphase_diplotype {
   }
 
   Int threads   = 2
-  Int mem_gb    = 16
+  #Initially 16Gb, 32% efficiency
+  Int mem_gb    = 8
   Int disk_size = ceil(size(phased_small_variant_vcf, "GB") + size(phased_structural_variant_vcf, "GB") + size(aligned_bam, "GB") + size(ref_fasta, "GB") + 50)
 
   command <<<
@@ -93,6 +94,7 @@ task pbstarphase_diplotype {
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
+    time_minutes: "20"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries

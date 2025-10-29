@@ -40,12 +40,13 @@ task glnexus {
 
     File? regions_bed
 
-    Int mem_gb = 60
+    Int mem_gb = 48
 
     RuntimeAttributes runtime_attributes
   }
-
-  Int threads   = 32
+  #Initially 60 GB RAM, 42% efficiency
+  #Initially 32 cores, 3% efficiency
+  Int threads   = 12
   Int disk_size = ceil(size(gvcfs, "GB") * 2 + 100)
 
   command <<<

@@ -112,7 +112,8 @@ task split_input_bam {
   String movie = basename(bam, ".bam")
 
   Int threads   = 16
-  Int mem_gb    = 64
+  #Initially 64 Gb of RAM, with 33% efficiency
+  Int mem_gb    = 32 
   Int disk_size = ceil(size(bam, "GB") * 3 + 20)
 
   command <<<
@@ -207,7 +208,7 @@ task split_input_bam {
     docker: "~{runtime_attributes.container_registry}/pbtk@sha256:67cd438ed9f343f90f058108170ddbff8fb1d9b5c193f4016be42b737ee2e73c"
     cpu: threads
     memory: mem_gb + " GiB"
-    time_minutes: "300"
+    time_minutes: "45"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -275,7 +276,8 @@ task pbmm2_align_wgs {
   }
 
   Int threads   = 32
-  Int mem_gb    = ceil(threads * 4)
+  #Initially ceil(threads * 4) (128) with 33% efficiency
+  Int mem_gb    =  64
   Int disk_size = ceil(size(bam, "GB") * 2 + size(ref_fasta, "GB") + 70)
 
   String movie = basename(bam, ".bam")
@@ -310,7 +312,7 @@ task pbmm2_align_wgs {
     cpu: threads
     memory: mem_gb + " GiB"
     disk: disk_size + " GB"
-    time_minutes: "1440"
+    time_minutes: "45"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries

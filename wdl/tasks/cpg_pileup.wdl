@@ -77,7 +77,8 @@ task cpg_pileup {
   }
 
   Int threads   = 16
-  Int mem_gb    = 32
+  #Initially 32, 99.97% efficiency
+  Int mem_gb    = 48
   Int disk_size = ceil((size(haplotagged_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
   command <<<
