@@ -208,7 +208,7 @@ task deepvariant_make_examples {
 
   Int task_end_index = task_start_index + tasks_per_shard - 1
 
-  Int mem_gb         = tasks_per_shard * 4
+  Int mem_gb         = 38   #tasks_per_shard * 4
   Int disk_size      = ceil(size(aligned_bams, "GB") * 2 + size(ref_fasta, "GB") + 20)
 
   command <<<
@@ -264,7 +264,7 @@ task deepvariant_make_examples {
     docker: docker_image
     cpu: tasks_per_shard
     memory: mem_gb + " GB"
-    time_minutes: "360"
+    time_minutes: "120"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
