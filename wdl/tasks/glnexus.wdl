@@ -62,7 +62,7 @@ task glnexus {
       max_alleles_per_site: 32
     genotyper_config:
       required_dp: 1
-      revise_genotypes: false
+      revise_genotypes: true
       allow_partial_data: true
       more_PL: true
       trim_uncalled_alleles: true
@@ -71,7 +71,7 @@ task glnexus {
           name: DP
           description: '##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (reads with MQ=255 or with bad mates are filtered)">'
           type: int
-          combi_method: min
+          combi_method: max
           number: basic
           count: 1
           ignore_non_variants: true
@@ -80,7 +80,7 @@ task glnexus {
           description: '##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">'
           type: int
           number: alleles
-          combi_method: min
+          combi_method: max
           default_type: zero
           count: 0
         - orig_names: [GQ]
@@ -88,7 +88,7 @@ task glnexus {
           description: '##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">'
           type: int
           number: basic
-          combi_method: min
+          combi_method: max
           count: 1
           ignore_non_variants: true
         - orig_names: [PL]
